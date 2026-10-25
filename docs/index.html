@@ -165,7 +165,7 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
 .price small{font-size:13px;color:var(--muted);font-weight:500}
 .card .btn{height:34px;padding:0 15px;font-size:13px}
 .card .btn.dark{background:var(--ink)}
-.card .btn.done{background:#e8f7ef;color:var(--ok)}
+.card .btn.done,.card .btn.dark.done,.card .btn.ghost.done{background:#e8f7ef;color:var(--ok)}
 .rows{display:flex;flex-direction:column;gap:10px}
 .row{display:flex;align-items:center;gap:11px;font-size:14px}
 .row canvas{width:44px;height:44px;border-radius:12px;flex:none;background:var(--soft)}
@@ -571,7 +571,8 @@ const LOGO = {
   aura: `<span class="logo" style="background:#1d2130"><svg viewBox="0 0 24 24"><path d="M5 19L12 5l7 14" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="15" r="2" fill="#a99bff"/></svg></span>`,
   pay: `<span class="logo" style="background:#e8f7ef"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9" stroke="#1f9d63" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`,
 };
-const head = (logo, name, sub, chip, cls = '') => `<div class="c-head">${LOGO[logo]}<div><b>${name}</b><small>${sub}</small></div><span class="chip ${cls}">${chip}</span></div>`;
+/** Cards are kept header-less on purpose (simplest possible card). Signature kept so card data stays readable. */
+const head = () => '';
 const row = (art, name, sub, price) => `<div class="row"><canvas data-art="${art}"></canvas><div class="grow"><b>${name}</b><small>${sub}</small></div><b>${price}</b></div>`;
 
 const SETS = {
@@ -745,8 +746,7 @@ function bindSets() {
 
 function bindHero() {
   const chart = `<div class="slot">
-      <div class="c-head">${LOGO.lumen}<div><b>Lumen Analytics</b><small>Revenue · This week</small></div><span class="chip live">▲ 12.6%</span></div>
-      <div><div class="t2" style="margin:0">Total revenue</div><div class="amount" style="font-size:40px">$48,290</div></div>
+      <div><div class="t2" style="margin:0;display:flex;justify-content:space-between;align-items:center">Total revenue <span class="chip live">▲ 12.6%</span></div><div class="amount" style="font-size:40px;margin-top:4px">$48,290</div></div>
       <div class="media"><canvas data-art="chart"></canvas></div>
       <div class="legend"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
       <div class="kpi-row"><div><b>1,284</b><small>Orders</small></div><div><b>3.8%</b><small>Conversion</small></div></div></div>`;
@@ -830,6 +830,30 @@ function bindSkeletons() {
   $('#skReset').addEventListener('click', resetSkeletons);
 }
 
+/* ---------- card buttons: every tap toggles a real state, decoded in place ---------- */
+const BTN_STATES = {
+  'Add to bag': 'Added ✓', 'Book': 'Booked ✓', 'Reserve': 'Reserved ✓', 'Track order': 'Tracking live ●',
+  'Follow': 'Following ✓', 'Message': 'Sent ✓', 'Upgrade': "You're on Pro ✓", 'Claim offer': 'Code FROST30 ✓',
+  'Remind me': 'Reminder set ✓', 'View receipt': 'Emailed ✓',
+};
+function bindCardButtons() {
+  document.addEventListener('click', async (e) => {
+    const btn = e.target.closest('.card .btn');
+    if (!btn || btn.dataset.busy || btn.closest('.tl-hide')) return;
+    const orig = btn.dataset.orig || (btn.dataset.orig = btn.textContent.trim());
+    const next = btn.classList.contains('done') ? orig : (BTN_STATES[orig] || `${orig} ✓`);
+    btn.dataset.busy = '1';
+    const g = glyph(btn, { preset: 'ink', origin: 'center' });
+    await g.hide({ speed: 2.6 });
+    btn.textContent = next;
+    btn.classList.toggle('done', next !== orig);
+    btn.setAttribute('aria-pressed', next !== orig);
+    await g.reveal({ speed: 1.8, origin: 'center' });
+    g.destroy();
+    delete btn.dataset.busy;
+  });
+}
+
 function bindChrome() {
   addEventListener('scroll', () => $('#nav').classList.toggle('scrolled', scrollY > 8), { passive: true });
   document.addEventListener('click', (e) => {
@@ -845,7 +869,7 @@ function bindChrome() {
 function boot() {
   buildSets(); buildSkeletons();
   $$('section[data-set]').forEach((s) => paint(s));
-  bindSets(); bindHero(); bindPresets(); bindSkeletons(); bindChrome();
+  bindSets(); bindHero(); bindPresets(); bindSkeletons(); bindChrome(); bindCardButtons();
   paint($('#presetCard'));
   $$('pre[data-lang]').forEach(highlight);
 }
