@@ -15,7 +15,10 @@
 <meta name="description" content="Skeletons made of glyphs, animated ASCII mascots and a decode-in reveal for any DOM element. Zero dependencies, ~7 KB. By Tomdesign.">
 <meta property="og:title" content="TomLoad — loading states, decoded">
 <meta property="og:description" content="Glyph skeletons, ASCII mascots and a decode-in reveal. Zero dependencies. By Tomdesign.">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.ico" sizes="any">
+<link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
+<link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -168,6 +171,16 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
 .card-load{position:absolute;left:18px;right:18px;bottom:18px;width:auto}
 .card .btn.card-load{height:36px}
 /* usage card */
+/* AI chat card (presets) */
+.ai{justify-content:space-between}
+.ai-orb{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.ai-orb canvas{width:280px;height:280px;max-width:100%;display:block}
+.ai-state{font-weight:500;font-size:19px;color:#a99bff;text-align:center}
+.ai-sub{font:500 11.5px var(--mono);color:var(--muted);text-align:center;letter-spacing:.03em}
+.ai-bar{display:flex;gap:8px;align-items:center}
+.ai-plus{width:44px;height:44px;flex:none;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:22px;color:var(--ink-2)}
+.ai-input{flex:1;height:44px;border-radius:999px;background:var(--soft);display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 16px;font-size:14px;color:var(--muted)}
+.ai-input svg{width:26px;height:26px;color:var(--ink-2)}
 .meter{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
 .meter i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff9cbc,#a99bff 55%,#6fb5ff)}
 .meter.sm{height:6px}
@@ -266,7 +279,7 @@ footer img{height:18px}
 }
 @media (max-width:720px){
   .links{display:none} .gh span{display:none}
-  .set-head{grid-template-columns:1fr} .set-actions{justify-content:flex-start} .status{text-align:left}
+  .set-head{grid-template-columns:1fr} .set-actions{justify-content:flex-end;width:100%} .status{text-align:left;min-width:0;margin-right:auto}
   .cards{grid-template-columns:1fr} .sk-grid{grid-template-columns:1fr 1fr}
   .hero-cards{grid-template-columns:minmax(0,360px)} .hero-cards .cardbox:nth-child(1){display:none} .hero-cards .cardbox:nth-child(2){margin-top:0}
   .install{font-size:12px;max-width:100%} .install span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -577,6 +590,14 @@ Object.assign(ART, {
   },
 });
 
+ART.aiorb = (ctx, W, H) => {
+  ctx.clearRect(0, 0, W, H);
+  ctx.filter = `blur(${Math.round(W * .07)}px)`;
+  const blobs = [[.42, .44, .34, 'rgba(255,190,160,1)'], [.6, .42, .32, 'rgba(160,140,255,1)'], [.5, .62, .3, 'rgba(225,165,240,.95)'], [.36, .58, .24, 'rgba(255,160,195,.85)']];
+  for (const [x, y, r, c] of blobs) { ctx.fillStyle = rad(ctx, W * x, H * y, W * r, [[0, c], [1, 'rgba(255,255,255,0)']]); ctx.fillRect(0, 0, W, H); }
+  ctx.filter = 'none';
+};
+
 function paint(root) { $$('canvas[data-art]', root).forEach((cv) => { const r = cv.getBoundingClientRect(), d = 2; cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); ART[cv.dataset.art](cv.getContext('2d'), cv.width, cv.height); }); }
 
 const LOGO = {
@@ -636,8 +657,8 @@ const SETS = {
         <div class="checks"><span>Unlimited projects</span><span>AI summaries</span><span>Priority support</span></div>
         <div class="foot"><span class="price">$12 <small>/ month</small></span><button class="btn" data-cta="You're on Pro ✓">Upgrade</button></div>` },
       { cap: '&lt;ProductCard skeleton="gradient"/&gt;', html: `${head('aura', 'Aura Audio', 'Studio Series', 'Bestseller')}
-        <div class="media"><canvas data-art="earbuds"></canvas></div>
-        <div><div class="t1">Aura Buds Pro</div><div class="t2">Spatial audio · 30-hour battery · Lilac</div></div>
+        <div class="media"><img src="assets/img/aura.jpg" alt="Aura — abstract bloom"></div>
+        <div><div class="t1">Aura Bloom</div><div class="t2">Fine-art print · 50 × 70 cm · Museum paper</div></div>
         <div class="foot"><span class="price">$149</span><button class="btn dark">Add to bag</button></div>` },
       { cap: '&lt;ReceiptCard skeleton="gradient"/&gt;', html: `${head('pay', 'Payment received', 'Today, 10:42 AM', 'Paid', 'live')}
         <div class="media" style="flex:.8"><canvas data-art="check"></canvas></div>
@@ -767,7 +788,12 @@ function bindSets() {
       setStatus('ready'); btn.disabled = false;
       btn.innerHTML = '<span class="ico"></span>Load again';
     });
-    $('[data-code]', sec).addEventListener('click', () => $('.set-code', sec).classList.toggle('open'));
+    $('[data-code]', sec).addEventListener('click', (e) => {
+      const box = $('.set-code', sec), open = box.classList.toggle('open');
+      e.currentTarget.setAttribute('aria-expanded', open);
+      e.currentTarget.innerHTML = open ? '&lt;/&gt; Hide code' : '&lt;/&gt; Code';
+      if (open) requestAnimationFrame(() => box.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+    });
     if (S.simple) $$('.card-load', sec).forEach((b) => b.addEventListener('click', () => loadOne(S, b.closest('.card'))));
   });
   // first view: decode each set once as it scrolls in
@@ -833,7 +859,10 @@ function bindHero() {
 
 function bindPresets() {
   const S = SETS.grad;
-  $('#presetCard').innerHTML = cardHTML({ ...S, mode: 'mascot' }, S.cards[1], 0);
+  $('#presetCard').innerHTML = `<div class="cardbox"><article class="card" data-i="0"><div class="slot ai">
+      <div class="ai-orb"><canvas data-art="aiorb"></canvas><div><div class="ai-state">Learning initiated</div><div class="ai-sub">READING 3 SOURCES · 2.4s</div></div></div>
+      <div class="ai-bar"><span class="ai-plus" data-tl="fade">+</span><div class="ai-input">Share with AI…<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M9 9v6M12 7v10M15 9v6"/></svg></div></div>
+    </div></article><div class="cap">&lt;AIChatCard/&gt; · preset voices</div></div>`;
   const st = $('#pStatus'), btn = $('#pLoad'), pre = $('#presets .code pre');
   let preset = 'ink', busy = false, queued = null;
   const setStatus = (txt) => { st.textContent = txt; st.classList.toggle('busy', txt !== 'idle'); };
@@ -859,6 +888,7 @@ function bindPresets() {
     run();
   }));
   btn.addEventListener('click', run);
+  showCode(preset);                                  // snippet matches the selected voice on load
 }
 
 function bindSkeletons() {
