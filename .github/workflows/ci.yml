@@ -5,14 +5,12 @@ on:
   pull_request:
     branches: [main]
 permissions:
-  contents: write
+  contents: read
 jobs:
   test-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -21,15 +19,6 @@ jobs:
       - run: npm run build
       - run: npm pack --dry-run
       - run: cmp dist/tomload.iife.js docs/tomload.iife.js
+      - run: git diff --exit-code -- dist/tomload.js dist/tomload.iife.js docs/tomload.iife.js
       - run: npx playwright install --with-deps chromium
       - run: npm run test:browser
-      - name: Commit generated bundles on hardening branch
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'fix/tml-001-hardening' }}
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add dist/tomload.js dist/tomload.iife.js docs/tomload.iife.js
-          if ! git diff --cached --quiet; then
-            git commit -m 'build: synchronize generated TomLoad distributions'
-            git push origin HEAD:fix/tml-001-hardening
-          fi
