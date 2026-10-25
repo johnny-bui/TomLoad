@@ -57,9 +57,9 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
    ========================================================= */
 .nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s}
 .nav.scrolled{border-color:var(--line)}
-.nav .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:72px}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
-.brand img{height:13px;width:auto;display:block}
+.brand img{height:20px;width:auto;display:block}
 .brand span{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-left:10px;border-left:1px solid var(--line)}
 .links{display:flex;gap:4px;margin-left:auto}
 .links a{padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:500;font-size:14px;color:var(--ink-2);transition:background .2s,color .2s}
@@ -98,9 +98,28 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .hero h1 span{display:block;color:var(--muted)}
 .hero p.lead{max-width:56ch;margin:22px auto 30px;font-size:18px;color:var(--ink-2)}
 .hero .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
-.hero-cards{display:flex;justify-content:center;gap:22px;margin-top:64px}
-.hero-cards .cardbox:nth-child(1){transform:translateY(26px)}
-.hero-cards .cardbox:nth-child(3){transform:translateY(26px)}
+.hero-cards{display:grid;grid-template-columns:320px 360px 320px;justify-content:center;align-items:start;gap:24px;margin-top:64px}
+.hero-cards .cardbox:nth-child(1),.hero-cards .cardbox:nth-child(3){margin-top:44px}
+.hero .card{width:100%}
+.hero .hc-side{height:450px}
+.hero .hc-main{height:500px}
+.hero .cap b{color:var(--ink-2);font-weight:500}
+.cover{height:150px;margin:-18px -18px 0;flex:none;position:relative;background:var(--soft)}
+.cover canvas{width:100%;height:100%;display:block}
+.avatar{width:76px;height:76px;border-radius:50%;margin:-56px 0 0 4px;border:4px solid #fff;flex:none;position:relative;z-index:1;
+  display:grid;place-items:center;font-weight:600;font-size:24px;color:#fff;background:linear-gradient(135deg,#ff9cbc,#a99bff 55%,#6fb5ff)}
+.p-name{display:flex;align-items:center;gap:8px;font-weight:600;font-size:22px;letter-spacing:-.01em}
+.p-name .chip{font-size:11px;padding:3px 9px}
+.p-role{font-size:14px;color:var(--ink-2);margin-top:2px}
+.p-tags{display:flex;gap:6px;flex-wrap:wrap}
+.p-tags span{font-size:12px;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink-2)}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.duo .btn{width:100%}
+.legend{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--muted)}
+.kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi-row div{background:var(--soft);border-radius:14px;padding:10px 12px}
+.kpi-row b{display:block;font-weight:600;font-size:17px}
+.kpi-row small{font-size:11.5px;color:var(--muted)}
 .stats{display:flex;justify-content:center;gap:clamp(20px,5vw,56px);margin-top:56px;flex-wrap:wrap}
 .stats div{text-align:center}
 .stats b{display:block;font-weight:600;font-size:28px;letter-spacing:-.02em}
@@ -128,7 +147,7 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
 .cap{font:500 11px var(--mono);color:var(--muted);letter-spacing:.03em;text-align:center}
 .card{width:100%;max-width:380px;height:540px;border-radius:var(--r);background:#fff;border:1px solid var(--line);position:relative;overflow:hidden;
   box-shadow:0 1px 2px rgba(16,24,40,.04),0 22px 48px -22px rgba(40,30,90,.2)}
-.hero .card{width:300px;height:430px}
+
 .slot{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;gap:14px}
 .c-head{display:flex;align-items:center;gap:10px}
 .logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
@@ -217,7 +236,7 @@ td code,p code{font:13px var(--mono);background:var(--soft);padding:2px 7px;bord
    ========================================================= */
 footer{margin-top:clamp(80px,10vw,128px);border-top:1px solid var(--line);padding:36px 0 48px}
 footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
-footer img{height:12px}
+footer img{height:18px}
 
 /* =========================================================
    RESPONSIVE
@@ -225,13 +244,13 @@ footer img{height:12px}
 @media (max-width:1024px){
   .cards{grid-template-columns:repeat(2,1fr)} .sk-grid{grid-template-columns:repeat(3,1fr)}
   .split,.steps,.api{grid-template-columns:1fr}
-  .hero-cards .cardbox:nth-child(3){display:none}
+  .hero-cards{grid-template-columns:320px 360px} .hero-cards .cardbox:nth-child(3){display:none}
 }
 @media (max-width:720px){
   .links{display:none} .gh span{display:none}
   .set-head{grid-template-columns:1fr} .set-actions{justify-content:flex-start} .status{text-align:left}
   .cards{grid-template-columns:1fr} .sk-grid{grid-template-columns:1fr 1fr}
-  .hero-cards .cardbox:nth-child(1){display:none} .hero-cards .cardbox:nth-child(2){transform:none}
+  .hero-cards{grid-template-columns:minmax(0,360px)} .hero-cards .cardbox:nth-child(1){display:none} .hero-cards .cardbox:nth-child(2){margin-top:0}
   .install{font-size:12px;max-width:100%} .install span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .card{height:520px}
 }
@@ -502,6 +521,42 @@ const ART = {
   bauble(ctx, W, H) { ctx.fillStyle = '#eef6f1'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = rad(ctx, W * .42, H * .45, W * .4, [[0, '#fff'], [.2, '#2f7a4f'], [1, '#143a26']]); ctx.beginPath(); ctx.arc(W / 2, H * .55, W * .26, 0, TAU); ctx.fill(); ctx.fillStyle = '#c9a54a'; ctx.fillRect(W * .43, H * .22, W * .14, H * .1); },
 };
 
+Object.assign(ART, {
+  chart(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, '#f7f5ff'], [1, '#eef4ff']]); ctx.fillRect(0, 0, W, H);
+    ctx.strokeStyle = 'rgba(29,33,48,.07)'; ctx.lineWidth = 2;
+    for (let i = 1; i < 4; i++) { ctx.beginPath(); ctx.moveTo(0, H * i / 4); ctx.lineTo(W, H * i / 4); ctx.stroke(); }
+    const pts = [.62, .55, .6, .42, .48, .3, .36, .22, .28, .14].map((v, i, a) => [W * (i / (a.length - 1)), H * v]);
+    const path = () => { ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i], mx = (x0 + x1) / 2; ctx.bezierCurveTo(mx, y0, mx, y1, x1, y1); } };
+    path(); ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, 'rgba(169,155,255,.55)'], [.6, 'rgba(255,156,188,.18)'], [1, 'rgba(255,156,188,0)']]); ctx.fill();
+    path(); ctx.strokeStyle = lin(ctx, 0, 0, W, 0, [[0, '#ff9cbc'], [.5, '#a99bff'], [1, '#6fb5ff']]); ctx.lineWidth = W * .014; ctx.lineCap = 'round'; ctx.stroke();
+    const [px, py] = pts[7];
+    ctx.strokeStyle = 'rgba(123,108,255,.35)'; ctx.setLineDash([6, 6]); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, H); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(px, py, W * .022, 0, TAU); ctx.fill();
+    ctx.strokeStyle = '#7b6cff'; ctx.lineWidth = W * .01; ctx.stroke();
+    const tw = W * .26, th = H * .16, tx = Math.min(W - tw - 8, px - tw / 2), ty = py - th - H * .07;
+    ctx.save(); ctx.shadowColor = 'rgba(40,30,90,.18)'; ctx.shadowBlur = 24; ctx.shadowOffsetY = 8;
+    rr(ctx, tx, ty, tw, th, th / 2); ctx.fillStyle = '#1d2130'; ctx.fill(); ctx.restore();
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = `600 ${th * .42}px Figtree, sans-serif`; ctx.fillText('$12.4k', tx + tw / 2, ty + th / 2);
+  },
+  cover(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, W, H, [[0, '#ffe3ee'], [.5, '#ece4ff'], [1, '#dcecff']]); ctx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 7; i++) {
+      ctx.save(); ctx.translate(W * (.48 + i * .07), H * (.95 - i * .05)); ctx.rotate(-.5);
+      rr(ctx, 0, -H * .9, W * .12, H * 1.4, W * .03);
+      ctx.fillStyle = lin(ctx, 0, -H, W * .12, H * .5, [[0, `hsla(${330 - i * 22} 95% 78% / .75)`], [1, `hsla(${250 - i * 15} 95% 82% / .25)`]]);
+      ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,.7)'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+    }
+    const r = H * .26, cx = W * .2, cy = H * .48;
+    ctx.fillStyle = rad(ctx, cx - r * .35, cy - r * .4, r * 1.3, [[0, '#ffffff'], [.25, '#ffd2e3'], [.65, '#b9a8ff'], [1, '#8ec5ff']]);
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.65)'; ctx.beginPath(); ctx.ellipse(cx - r * .35, cy - r * .45, r * .25, r * .14, -.6, 0, TAU); ctx.fill();
+  },
+});
+
 function paint(root) { $$('canvas[data-art]', root).forEach((cv) => { const r = cv.getBoundingClientRect(), d = 2; cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); ART[cv.dataset.art](cv.getContext('2d'), cv.width, cv.height); }); }
 
 const LOGO = {
@@ -688,19 +743,44 @@ function bindSets() {
 }
 
 function bindHero() {
-  const S = SETS.vn, H = SETS.grad;
-  const picks = [[H, 1], [S, 0], [SETS.xmas, 0]];
-  $('#heroCards').innerHTML = picks.map(([set, i], k) => cardHTML(set, set.cards[i], k).replace(/<div class="cap">.*?<\/div><\/div>$/s, '</div>')).join('');
+  const chart = `<div class="slot">
+      <div class="c-head">${LOGO.lumen}<div><b>Lumen Analytics</b><small>Revenue · This week</small></div><span class="chip live">▲ 12.6%</span></div>
+      <div><div class="t2" style="margin:0">Total revenue</div><div class="amount" style="font-size:40px">$48,290</div></div>
+      <div class="media"><canvas data-art="chart"></canvas></div>
+      <div class="legend"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span></div>
+      <div class="kpi-row"><div><b>1,284</b><small>Orders</small></div><div><b>3.8%</b><small>Conversion</small></div></div></div>`;
+  const profile = `<div class="grad">${skeleton({ variant: 'braille', lines: 3, seed: 21 }).replace('class="tls', 'style="top:180px" class="tls')}${skeleton({ variant: 'dots', lines: 4, seed: 22 }).replace('class="tls', 'style="bottom:24px" class="tls')}</div>
+    <div class="slot">
+      <div class="cover"><canvas data-art="cover"></canvas></div>
+      <div class="avatar">LP</div>
+      <div><div class="p-name">Lan Pham <span class="chip live">Pro</span></div><div class="p-role">Senior Product Designer · Ho Chi Minh City</div></div>
+      <div class="p-tags"><span>UX Strategy</span><span>Design Systems</span><span>Motion</span></div>
+      <div class="count"><div><b>48</b><small>Projects</small></div><div><b>12.4k</b><small>Followers</small></div><div><b>3.1k</b><small>Likes</small></div></div>
+      <div class="duo" style="margin-top:auto"><button class="btn dark">Follow</button><button class="btn ghost">Message</button></div></div>`;
+  const product = `<div class="slot">${SETS.grad.cards[1].html}</div>`;
+  const cards = [
+    { html: chart, cls: 'hc-side', cap: '<b>&lt;ChartCard/&gt;</b> · loading(true) · binary', preset: 'binary', mode: 'field' },
+    { html: profile, cls: 'hc-main', cap: '<b>&lt;ProfileCard/&gt;</b> · gradient skeleton', preset: 'dither', mode: 'gradient' },
+    { html: product, cls: 'hc-side', cap: '<b>&lt;ProductCard/&gt;</b> · mascot={gift}', preset: 'spark', mode: 'mascot', mascot: 'gift' },
+  ];
+  $('#heroCards').innerHTML = cards.map((c, i) => `<div class="cardbox"><article class="card ${c.cls}" data-i="${i}">${c.html}</article><div class="cap">${c.cap}</div></div>`).join('');
   paint($('#heroCards'));
   const run = async () => {
-    const slots = $$('#heroCards .slot');
+    const els = $$('#heroCards .card');
     $('#heroReplay').disabled = true;
-    const gs = slots.map((s, k) => glyph(s, { preset: picks[k][0].preset }));
+    const gs = els.map((el, k) => glyph($('.slot', el), { preset: cards[k].preset }));
     gs.forEach((g) => g.hide({ instant: true }));
-    gs.forEach((g, k) => g.loading(true, { mascot: mascots[['lantern', 'phin', 'tree'][k]] }));
-    await sleep(1500);
-    for (const g of gs) { g.loading(false); g.reveal({ origin: 'top', speed: .6 }).then(() => g.destroy()); await sleep(260); }
-    await sleep(1200); $('#heroReplay').disabled = false;
+    cards.forEach((c, k) => {
+      if (c.mode === 'gradient') els[k].classList.add('breathing');
+      else gs[k].loading(true, c.mascot ? { mascot: mascots[c.mascot] } : {});
+    });
+    await sleep(1900);
+    for (const [k, g] of gs.entries()) {
+      if (cards[k].mode === 'gradient') els[k].classList.remove('breathing'); else g.loading(false);
+      g.reveal({ origin: 'top', speed: .6 }).then(() => g.destroy());
+      await sleep(300);
+    }
+    await sleep(1400); $('#heroReplay').disabled = false;
   };
   $('#heroReplay').addEventListener('click', run);
   run();
