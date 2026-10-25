@@ -556,7 +556,7 @@ export function skeleton({ lines = 3, variant = 'dots', widths, rows, seed = 1, 
   const set = SKELETONS[variant] || (typeof variant === 'string' && variant.length && variant.length <= 128 ? variant : SKELETONS.dots);
   const safeWidth = (value) => {
     const candidate = String(value);
-    return /^(?:0|(?:\\d+(?:\\.\\d+)?)(?:px|%|em|rem|vw|ch))$/.test(candidate) ? candidate : '100%';
+    return /^(?:0|(?:\d+(?:\.\d+)?)(?:px|%|em|rem|vw|ch))$/.test(candidate) ? candidate : '100%';
   };
   const count = (value, fallback) => Number.isFinite(value) ? Math.max(0, Math.min(100, Math.floor(value))) : fallback;
   lines = count(lines, 3); rows = count(rows, 0); chars = count(chars, 64);
@@ -567,7 +567,7 @@ export function skeleton({ lines = 3, variant = 'dots', widths, rows, seed = 1, 
     return `<span class="tls tls-${safeVariant}" aria-hidden="true">${Array.from({ length: rows }, () => `<span class="tls-row">${row(chars)}</span>`).join('')}</span>`;
   }
   const w = widths || ['100%', '92%', '76%', '84%', '58%'];
-  return `<span class="tls tls-${variant}" aria-hidden="true">${Array.from({ length: lines }, (_, i) =>
+  return `<span class="tls tls-${safeVariant}" aria-hidden="true">${Array.from({ length: lines }, (_, i) =>
     `<span class="tls-line" style="width:${safeWidth(w[i % w.length])}">${row(chars)}</span>`).join('')}</span>`;
 }
 
