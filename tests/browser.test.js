@@ -32,7 +32,7 @@ test('destroy restores host class, inline styles, aria-busy and canvas layers', 
     return {hidden: host.classList.contains('tl-hide'), hostClass:host.classList.contains('tl-host'),
       busy:host.hasAttribute('aria-busy'), opacity:button.style.opacity, layers:host.querySelectorAll('.tl-layer').length};
   });
-  assert.deepEqual(result,{hidden:false,hostClass:false,busy:false,opacity:'.8',layers:0});
+  assert.deepEqual(result,{hidden:false,hostClass:false,busy:false,opacity:'0.8',layers:0});
   await page.close();
 });
 test('interrupted reveal settles and leaves no leaked layers', async () => {
