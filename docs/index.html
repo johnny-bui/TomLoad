@@ -683,7 +683,7 @@ const SET_COPY = {
   vn:   { desc: 'ASCII mascots drawn from Vietnamese everyday life — a dripping coffee filter, a conical hat over rice fields, a swinging lantern — while each card loads.',
           code: `import { glyph, mascots } from 'tomload';\n\nconst g = glyph(card, { preset: 'ink' });\ng.hide({ instant: true });\ng.loading(true, { mascot: mascots.phin });   // hat · lantern\n\nawait fetchData();\ng.loading(false);\nawait g.reveal({ origin: 'top', speed: 0.6 });` },
   xmas: { desc: 'Plain one-colour cards. Each has its own Load — a small snowman, tree or gift plays in the exact spot where the number is about to land.',
-          code: `loadBtn.onclick = async () => {\n  const g = glyph(card.querySelector('.data'), { preset: 'spark' });\n  await g.hide();\n  g.loading(true, { mascot: mascots.snowman, size: 96 });   // tree · gift\n  render(await fetchStats());\n  g.loading(false);\n  await g.reveal();\n};` },
+          code: `loadBtn.onclick = async () => {\n  const g = glyph(card.querySelector('.data'), { preset: 'spark' });\n  await g.hide();\n  g.loading(true, { mascot: mascots.snowman, size: 220 });   // tree · gift\n  render(await fetchStats());\n  g.loading(false);\n  await g.reveal();\n};` },
   grad: { desc: 'A breathing pastel gradient with glyph rows on top. When data lands the gradient melts away and images decode through shaded blocks.',
           code: `card.classList.add('breathing');                     // your CSS gradient\ngrad.innerHTML = skeleton({ variant: 'braille', lines: 4 });\nconst g = glyph(slot, { preset: 'dither' });\ng.hide({ instant: true });\n\nawait fetchData();\ncard.classList.remove('breathing');\nawait g.reveal();` },
 };
@@ -724,7 +724,7 @@ async function loadOne(S, card) {
   btn.disabled = true; btn.textContent = 'Loading…';
   const g = glyph(slot, { preset: S.preset });
   await g.hide({ speed: 1.8 });
-  g.loading(true, { mascot: mascots[c.mascot], size: 96 });
+  g.loading(true, { mascot: mascots[c.mascot], size: 220 });
   await sleep(1800 + Math.random() * 600);
   slot.innerHTML = simpleHTML(c);                    // new data arrives
   g.loading(false);

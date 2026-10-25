@@ -150,7 +150,7 @@ watch(() => props.data, async (d) => {
 |---|---|
 | `reveal({ origin, speed })` | Decode content in. Resolves when everything has landed |
 | `hide({ instant, origin, speed })` | Scramble content out (or hide instantly). It stays hidden until `reveal()` |
-| `loading(on, { mascot, size, cell, offsetY })` | Content-shaped glyph field, or a mascot (default box 132 px) while data loads |
+| `loading(on, { mascot, size, cell, offsetY })` | Content-shaped glyph field, or a mascot (default box 200 px, capped at 90% of the element) while data loads |
 | `update(options)` | Merge new options, e.g. switch preset |
 | `destroy()` | Stop everything and restore the element |
 | `state` | `'shown'` · `'hidden'` · `'revealing'` · `'hiding'` |

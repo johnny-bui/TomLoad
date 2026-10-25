@@ -1,6 +1,6 @@
 {
   "name": "tomload",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Loading states, decoded: glyph skeletons, ASCII mascots and a decode-in reveal for any DOM element. Zero dependencies. By Tomdesign.",
   "type": "module",
   "main": "dist/tomload.js",

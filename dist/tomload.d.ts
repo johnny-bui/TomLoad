@@ -57,7 +57,7 @@ export interface HideOptions extends RunOptions {
 export interface LoadingOptions {
   /** Draw a mascot instead of the content-shaped glyph field. */
   mascot?: Mascot;
-  /** Mascot box size in px. Default `132` (capped at 70% of the element). */
+  /** Mascot box size in px. Default `200` (capped at 90% of the element). */
   size?: number;
   /** Glyph cell height for the mascot grid. */
   cell?: number;

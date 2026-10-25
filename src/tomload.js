@@ -1,6 +1,6 @@
 /**
  * Feature : TomLoad — glyph-decode loading states for any DOM element
- * Version : 0.1.0
+ * Version : 0.1.1
  * Author  : Tomdesign (Johnny Bui) — https://tomdesign.vn
  * License : MIT
  * Purpose : Text, images and canvases decode into place through a glyph grid.
@@ -418,7 +418,7 @@ export function glyph(scope, options = {}) {
     // mascot: a small square box centred on the content (default ≤ 132px), drawn through a fine glyph grid
     let mascot = null;
     if (o.mascot) {
-      const size = Math.min(o.size || 132, H.width * 0.7, H.height * 0.7);
+      const size = Math.min(o.size || 200, H.width * 0.9, H.height * 0.9);
       const cell = o.cell || Math.max(4, Math.round(size / 26)), cw = cell * 0.62;
       const cols = Math.floor(size / cw), rows = Math.floor(size / cell);
       const mx = (H.width - cols * cw) / 2, my = (H.height - rows * cell) / 2 + (o.offsetY || 0);

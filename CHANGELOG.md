@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1 — 2026-10-25
+- Mascots are larger by default: box 200 px (was 132), capped at 90% of the element (was 70%).
+- Docs: Holiday set mascots at 220 px so they read well in screen recordings.
+
 ## 0.1.0 — 2026-10-25
 
 First public release.
