@@ -24,14 +24,14 @@
    TOKENS
    ========================================================= */
 :root{
-  --bg:#ffffff; --soft:#f5f6f9; --soft-2:#eef0f5; --line:#eceef3;
+  --bg:#ffffff; --soft:#f5f6f9; --soft-2:#eef0f5; --line:#eceef3; --line-card:#f3f4f8;
   --ink:#1d2130; --ink-2:#5d6278; --muted:#9a9fb5;
   --brand:#163562; --brand-red:#be1e2d;
   --pink:#ffd9e6; --lav:#e7e0ff; --sky:#dbe9ff;
   --ok:#1f9d63;
   --sans:"Figtree", system-ui, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
-  --r:28px; --gutter:clamp(16px,4vw,48px);
+  --r:20px; --gutter:clamp(16px,4vw,48px);
   --tl-accent:#7b6cff; --tl-skeleton:#c3c7d6;
 }
 
@@ -64,31 +64,31 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .links{display:flex;gap:4px;margin-left:auto}
 .links a{padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:500;font-size:14px;color:var(--ink-2);transition:background .2s,color .2s}
 .links a:hover{background:var(--soft);color:var(--ink)}
-.gh{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+.gh{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px;border-radius:999px;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;font-size:13px}
 .gh svg{width:16px;height:16px}
 
 /* =========================================================
    COMPONENTS — buttons, chips, code
    ========================================================= */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;white-space:nowrap;
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:40px;padding:0 18px;border-radius:999px;font-weight:600;font-size:13.5px;white-space:nowrap;
   background:linear-gradient(90deg,var(--pink),var(--lav));color:var(--ink);transition:transform .15s,opacity .2s}
 .btn:hover{transform:translateY(-1px)}
 .btn:disabled{opacity:.55;cursor:progress;transform:none}
 .btn.dark{background:var(--brand);color:#fff}
 .btn.ghost{background:var(--soft)}
-.btn.sm{height:38px;padding:0 15px;font-size:14px}
-.btn .ico{display:inline-block;width:0;height:0;border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.btn.sm{height:34px;padding:0 14px;font-size:13px}
+.btn .ico{display:inline-block;width:0;height:0;border-left:7px solid currentColor;border-top:4px solid transparent;border-bottom:4px solid transparent}
 .chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--soft);font-weight:500;font-size:12.5px;color:var(--ink-2);white-space:nowrap}
 .chip i{width:6px;height:6px;border-radius:50%;background:#7b6cff}
 .eyebrow{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
-.code{position:relative;background:#14161f;color:#d7dae6;border-radius:18px;padding:18px 20px;font:13px/1.65 var(--mono);overflow:auto}
+.code{position:relative;background:#14161f;color:#d7dae6;border-radius:16px;padding:18px 20px;font:13px/1.65 var(--mono);overflow:auto}
 .code pre{white-space:pre}
 .code .c{color:#6b7190}.code .s{color:#ffb3cd}.code .k{color:#b9a8ff}.code .t{color:#9fd0ff}.code .n{color:#ffd2b3}
 .copy{position:absolute;top:10px;right:10px;height:28px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#d7dae6;font:500 11px var(--mono);letter-spacing:.04em;transition:background .2s}
 .copy:hover{background:rgba(255,255,255,.16)}
-.install{display:inline-flex;align-items:center;gap:12px;height:46px;padding:0 8px 0 18px;border-radius:999px;background:var(--soft);font:500 14px var(--mono)}
+.install{display:inline-flex;align-items:center;gap:12px;height:40px;padding:0 8px 0 18px;border-radius:999px;background:var(--soft);font:500 14px var(--mono)}
 .install b{color:#7b6cff;font-weight:500}
-.install button{height:32px;padding:0 12px;border-radius:999px;background:#fff;font:600 12px var(--sans);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+.install button{height:28px;padding:0 11px;border-radius:999px;background:#fff;font:600 12px var(--sans);box-shadow:0 1px 2px rgba(16,24,40,.08)}
 
 /* =========================================================
    SECTION — hero
@@ -134,7 +134,7 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
 .set-head h2 span{display:block;color:var(--muted)}
 .set-head p{max-width:52ch;color:var(--ink-2);margin-top:14px}
 .set-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
-.status{font:500 12px var(--mono);color:var(--muted);min-width:110px;text-align:right}
+.status{font:500 12px var(--mono);color:var(--muted);min-width:150px;text-align:right}
 .status.busy{color:#7b6cff}
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .set-code{margin-top:22px;display:none}
@@ -145,8 +145,8 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
    ========================================================= */
 .cardbox{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
 .cap{font:500 11px var(--mono);color:var(--muted);letter-spacing:.03em;text-align:center}
-.card{width:100%;max-width:380px;height:540px;border-radius:var(--r);background:#fff;border:1px solid var(--line);position:relative;overflow:hidden;
-  box-shadow:0 1px 2px rgba(16,24,40,.04),0 22px 48px -22px rgba(40,30,90,.2)}
+.card{width:100%;max-width:380px;height:540px;border-radius:var(--r);background:#fff;border:1px solid var(--line-card);position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(16,24,40,.03),0 22px 48px -24px rgba(40,30,90,.16)}
 
 .slot{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;gap:14px}
 .c-head{display:flex;align-items:center;gap:10px}
@@ -156,14 +156,14 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
 .c-head small{display:block;font-size:12.5px;color:var(--muted)}
 .c-head .chip{margin-left:auto;font-size:11.5px;padding:4px 10px}
 .chip.live{background:#e8f7ef;color:var(--ok)} .chip.hot{background:#ffe7ec;color:#d63a5a}
-.media{flex:1;border-radius:18px;overflow:hidden;min-height:0;background:var(--soft)}
+.media{flex:1;border-radius:14px;overflow:hidden;min-height:0;background:var(--soft)}
 .media canvas{width:100%;height:100%;display:block}
 .t1{font-weight:600;font-size:21px;line-height:1.15;letter-spacing:-.01em}
 .t2{font-size:14px;color:var(--ink-2);margin-top:3px}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .price{font-weight:600;font-size:22px}
 .price small{font-size:13px;color:var(--muted);font-weight:500}
-.card .btn{height:40px;padding:0 17px;font-size:14px}
+.card .btn{height:34px;padding:0 15px;font-size:13px}
 .card .btn.dark{background:var(--ink)}
 .card .btn.done{background:#e8f7ef;color:var(--ok)}
 .rows{display:flex;flex-direction:column;gap:10px}
@@ -203,14 +203,15 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
    ========================================================= */
 .split{display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:start}
 .seg{display:inline-flex;gap:3px;padding:4px;border-radius:999px;background:var(--soft)}
-.seg button{height:34px;padding:0 14px;border-radius:999px;font-weight:500;font-size:14px;color:var(--ink-2)}
+.seg button{height:32px;padding:0 14px;border-radius:999px;font-weight:500;font-size:13px;color:var(--ink-2);transition:background .2s,color .2s}
+.seg button:hover{color:var(--ink)}
 .seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.06),0 4px 12px -4px rgba(16,24,40,.12)}
 .preset-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
-.preset-info div{background:var(--soft);border-radius:18px;padding:16px}
+.preset-info div{background:var(--soft);border-radius:16px;padding:16px}
 .preset-info b{display:block;font-weight:600}
 .preset-info span{font-size:14px;color:var(--ink-2)}
 .sk-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
-.sk{border:1px solid var(--line);border-radius:22px;padding:16px;min-height:220px;display:flex;flex-direction:column;gap:12px;background:#fff}
+.sk{border:1px solid var(--line-card);border-radius:20px;padding:16px;min-height:220px;display:flex;flex-direction:column;gap:12px;background:#fff}
 .sk-head{display:flex;justify-content:space-between;align-items:center}
 .sk-head b{font-weight:600;font-size:14px}
 .sk-slot{flex:1;font-size:14px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
@@ -220,7 +221,7 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
    SECTION — install & API
    ========================================================= */
 .steps{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.step{border:1px solid var(--line);border-radius:24px;padding:22px;background:#fff;display:flex;flex-direction:column;gap:14px}
+.step{border:1px solid var(--line-card);border-radius:20px;padding:22px;background:#fff;display:flex;flex-direction:column;gap:14px}
 .step h3{font-weight:600;font-size:18px;display:flex;gap:10px;align-items:center}
 .step h3 i{font:500 12px var(--mono);font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--lav);color:#6a5cf0}
 .step p{color:var(--ink-2);font-size:15px}
@@ -228,7 +229,7 @@ table{width:100%;border-collapse:collapse;font-size:14.5px}
 th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
 th{font:500 12px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
 td code,p code{font:13px var(--mono);background:var(--soft);padding:2px 7px;border-radius:7px;white-space:nowrap}
-.tbl{border:1px solid var(--line);border-radius:22px;overflow:auto;background:#fff}
+.tbl{border:1px solid var(--line-card);border-radius:20px;overflow:auto;background:#fff}
 .api{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 
 /* =========================================================
@@ -298,7 +299,7 @@ footer img{height:18px}
   <div class="wrap">
     <div class="set-head">
       <div><div class="eyebrow">04 — Presets</div><h2>One engine, <span>four glyph voices.</span></h2>
-        <p>Pick a preset, press Load. The same card scrambles out, shows a glyph field while “fetching”, then decodes in with the new voice.</p></div>
+        <p>Tap a voice — the card runs a real cycle right away: scrambles out, shows a glyph field while “fetching”, then decodes in with that voice.</p></div>
       <div class="set-actions"><span class="status" id="pStatus">idle</span><button class="btn dark sm" id="pLoad"><span class="ico"></span>Load</button></div>
     </div>
     <div class="split">
@@ -789,18 +790,31 @@ function bindHero() {
 function bindPresets() {
   const S = SETS.grad;
   $('#presetCard').innerHTML = cardHTML({ ...S, mode: 'mascot' }, S.cards[1], 0);
-  let preset = 'ink';
-  $$('#pSeg button').forEach((b) => b.addEventListener('click', () => { preset = b.dataset.p; $$('#pSeg button').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
-  $('#pLoad').addEventListener('click', async () => {
-    const btn = $('#pLoad'), st = $('#pStatus'); btn.disabled = true;
-    const g = glyph($('#presetCard .slot'), { preset });
-    st.textContent = 'scrambling…'; st.classList.add('busy');
+  const st = $('#pStatus'), btn = $('#pLoad'), pre = $('#presets .code pre');
+  let preset = 'ink', busy = false, queued = null;
+  const setStatus = (txt) => { st.textContent = txt; st.classList.toggle('busy', txt !== 'idle'); };
+  const showCode = (p) => { pre.textContent = pre.textContent.replace(/preset: '\w+'/, `preset: '${p}'`); highlight(pre); };
+  /** One real cycle: scramble out → glyph field → decode in with the chosen voice. */
+  const run = async () => {
+    if (busy) { queued = preset; return; }
+    busy = true; btn.disabled = true;
+    const p = preset;                                  // freeze the voice for this cycle
+    const g = glyph($('#presetCard .slot'), { preset: p });
+    setStatus(`${p} · scrambling…`);
     await g.hide({ speed: 1.8 });
-    st.textContent = 'loading…'; g.loading(true); await sleep(1600);
-    g.loading(false); st.textContent = 'decoding…';
+    setStatus(`${p} · loading…`); g.loading(true); await sleep(1400);
+    g.loading(false); setStatus(`${p} · decoding…`);
     await g.reveal({ origin: 'top', speed: .7 }); g.destroy();
-    st.textContent = 'idle'; st.classList.remove('busy'); btn.disabled = false;
-  });
+    busy = false; btn.disabled = false; setStatus('idle');
+    if (queued) { preset = queued; queued = null; run(); }
+  };
+  $$('#pSeg button').forEach((b) => b.addEventListener('click', () => {
+    preset = b.dataset.p;
+    $$('#pSeg button').forEach((x) => x.setAttribute('aria-pressed', x === b));
+    showCode(preset);
+    run();
+  }));
+  btn.addEventListener('click', run);
 }
 
 function bindSkeletons() {
