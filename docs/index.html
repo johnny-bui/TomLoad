@@ -1,0 +1,759 @@
+<!doctype html>
+<!--
+  Feature : TomLoad — documentation & showcase site
+  Version : 0.1.0
+  Author  : Tomdesign (Johnny Bui) — https://tomdesign.vn
+  Purpose : Public page for github.com/johnny-bui/TomLoad: hero, one section per skeleton set
+            (press Load → the matching loading state runs → content decodes in), presets, skeleton
+            variants, install steps, API reference. Served by GitHub Pages from /docs.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TomLoad — loading states, decoded · Tomdesign</title>
+<meta name="description" content="Skeletons made of glyphs, animated ASCII mascots and a decode-in reveal for any DOM element. Zero dependencies, ~7 KB. By Tomdesign.">
+<meta property="og:title" content="TomLoad — loading states, decoded">
+<meta property="og:description" content="Glyph skeletons, ASCII mascots and a decode-in reveal. Zero dependencies. By Tomdesign.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   TOKENS
+   ========================================================= */
+:root{
+  --bg:#ffffff; --soft:#f5f6f9; --soft-2:#eef0f5; --line:#eceef3;
+  --ink:#1d2130; --ink-2:#5d6278; --muted:#9a9fb5;
+  --brand:#163562; --brand-red:#be1e2d;
+  --pink:#ffd9e6; --lav:#e7e0ff; --sky:#dbe9ff;
+  --ok:#1f9d63;
+  --sans:"Figtree", system-ui, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:28px; --gutter:clamp(16px,4vw,48px);
+  --tl-accent:#7b6cff; --tl-skeleton:#c3c7d6;
+}
+
+/* =========================================================
+   BASE
+   ========================================================= */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+:focus-visible{outline:2px solid #7b6cff;outline-offset:3px;border-radius:10px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 var(--gutter)}
+.mono{font-family:var(--mono)}
+.muted{color:var(--muted)}
+.glow{position:absolute;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(520px 260px at 50% 70%,rgba(231,224,255,.7),transparent 70%),
+             radial-gradient(420px 220px at 22% 80%,rgba(255,217,230,.55),transparent 70%),
+             radial-gradient(420px 220px at 80% 82%,rgba(219,233,255,.6),transparent 70%)}
+
+/* =========================================================
+   COMPONENTS — nav
+   ========================================================= */
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid transparent;transition:border-color .3s}
+.nav.scrolled{border-color:var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand img{height:13px;width:auto;display:block}
+.brand span{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding-left:10px;border-left:1px solid var(--line)}
+.links{display:flex;gap:4px;margin-left:auto}
+.links a{padding:8px 12px;border-radius:999px;text-decoration:none;font-weight:500;font-size:14px;color:var(--ink-2);transition:background .2s,color .2s}
+.links a:hover{background:var(--soft);color:var(--ink)}
+.gh{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 14px;border-radius:999px;background:var(--brand);color:#fff;text-decoration:none;font-weight:600;font-size:14px}
+.gh svg{width:16px;height:16px}
+
+/* =========================================================
+   COMPONENTS — buttons, chips, code
+   ========================================================= */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:46px;padding:0 20px;border-radius:999px;font-weight:600;font-size:15px;white-space:nowrap;
+  background:linear-gradient(90deg,var(--pink),var(--lav));color:var(--ink);transition:transform .15s,opacity .2s}
+.btn:hover{transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:progress;transform:none}
+.btn.dark{background:var(--brand);color:#fff}
+.btn.ghost{background:var(--soft)}
+.btn.sm{height:38px;padding:0 15px;font-size:14px}
+.btn .ico{display:inline-block;width:0;height:0;border-left:8px solid currentColor;border-top:5px solid transparent;border-bottom:5px solid transparent}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;background:var(--soft);font-weight:500;font-size:12.5px;color:var(--ink-2);white-space:nowrap}
+.chip i{width:6px;height:6px;border-radius:50%;background:#7b6cff}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.code{position:relative;background:#14161f;color:#d7dae6;border-radius:18px;padding:18px 20px;font:13px/1.65 var(--mono);overflow:auto}
+.code pre{white-space:pre}
+.code .c{color:#6b7190}.code .s{color:#ffb3cd}.code .k{color:#b9a8ff}.code .t{color:#9fd0ff}.code .n{color:#ffd2b3}
+.copy{position:absolute;top:10px;right:10px;height:28px;padding:0 10px;border-radius:999px;background:rgba(255,255,255,.08);color:#d7dae6;font:500 11px var(--mono);letter-spacing:.04em;transition:background .2s}
+.copy:hover{background:rgba(255,255,255,.16)}
+.install{display:inline-flex;align-items:center;gap:12px;height:46px;padding:0 8px 0 18px;border-radius:999px;background:var(--soft);font:500 14px var(--mono)}
+.install b{color:#7b6cff;font-weight:500}
+.install button{height:32px;padding:0 12px;border-radius:999px;background:#fff;font:600 12px var(--sans);box-shadow:0 1px 2px rgba(16,24,40,.08)}
+
+/* =========================================================
+   SECTION — hero
+   ========================================================= */
+.hero{position:relative;isolation:isolate;padding:clamp(56px,9vw,112px) 0 clamp(56px,8vw,96px);text-align:center}
+.hero h1{font-weight:500;font-size:clamp(44px,7vw,84px);line-height:1.04;letter-spacing:-.03em;margin:18px auto 0;max-width:13ch}
+.hero h1 span{display:block;color:var(--muted)}
+.hero p.lead{max-width:56ch;margin:22px auto 30px;font-size:18px;color:var(--ink-2)}
+.hero .row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.hero-cards{display:flex;justify-content:center;gap:22px;margin-top:64px}
+.hero-cards .cardbox:nth-child(1){transform:translateY(26px)}
+.hero-cards .cardbox:nth-child(3){transform:translateY(26px)}
+.stats{display:flex;justify-content:center;gap:clamp(20px,5vw,56px);margin-top:56px;flex-wrap:wrap}
+.stats div{text-align:center}
+.stats b{display:block;font-weight:600;font-size:28px;letter-spacing:-.02em}
+.stats span{font-size:13px;color:var(--muted)}
+
+/* =========================================================
+   SECTION — sets
+   ========================================================= */
+section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 0}
+.set-head{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;margin-bottom:36px}
+.set-head h2{font-weight:500;font-size:clamp(32px,4.4vw,52px);line-height:1.06;letter-spacing:-.025em;margin-top:10px}
+.set-head h2 span{display:block;color:var(--muted)}
+.set-head p{max-width:52ch;color:var(--ink-2);margin-top:14px}
+.set-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.status{font:500 12px var(--mono);color:var(--muted);min-width:110px;text-align:right}
+.status.busy{color:#7b6cff}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.set-code{margin-top:22px;display:none}
+.set-code.open{display:block}
+
+/* =========================================================
+   COMPONENTS — demo cards (shared with the LinkedIn kit)
+   ========================================================= */
+.cardbox{display:flex;flex-direction:column;align-items:center;gap:10px;min-width:0}
+.cap{font:500 11px var(--mono);color:var(--muted);letter-spacing:.03em;text-align:center}
+.card{width:100%;max-width:380px;height:540px;border-radius:var(--r);background:#fff;border:1px solid var(--line);position:relative;overflow:hidden;
+  box-shadow:0 1px 2px rgba(16,24,40,.04),0 22px 48px -22px rgba(40,30,90,.2)}
+.hero .card{width:300px;height:430px}
+.slot{position:absolute;inset:0;padding:18px;display:flex;flex-direction:column;gap:14px}
+.c-head{display:flex;align-items:center;gap:10px}
+.logo{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.logo svg{width:62%;height:62%}
+.c-head b{display:block;font-weight:600;font-size:15px;line-height:1.2}
+.c-head small{display:block;font-size:12.5px;color:var(--muted)}
+.c-head .chip{margin-left:auto;font-size:11.5px;padding:4px 10px}
+.chip.live{background:#e8f7ef;color:var(--ok)} .chip.hot{background:#ffe7ec;color:#d63a5a}
+.media{flex:1;border-radius:18px;overflow:hidden;min-height:0;background:var(--soft)}
+.media canvas{width:100%;height:100%;display:block}
+.t1{font-weight:600;font-size:21px;line-height:1.15;letter-spacing:-.01em}
+.t2{font-size:14px;color:var(--ink-2);margin-top:3px}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.price{font-weight:600;font-size:22px}
+.price small{font-size:13px;color:var(--muted);font-weight:500}
+.card .btn{height:40px;padding:0 17px;font-size:14px}
+.card .btn.dark{background:var(--ink)}
+.card .btn.done{background:#e8f7ef;color:var(--ok)}
+.rows{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:11px;font-size:14px}
+.row canvas{width:44px;height:44px;border-radius:12px;flex:none;background:var(--soft)}
+.row .grow{flex:1;min-width:0}
+.row .grow small{display:block;color:var(--muted);font-size:12px}
+.row b{font-weight:600}
+.track{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.track i{height:5px;border-radius:9px;background:var(--line)}
+.track i.on{background:linear-gradient(90deg,#ff9cbc,#a99bff)}
+.meta{display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted)}
+.courier{display:flex;align-items:center;gap:10px;padding:11px;border-radius:15px;background:var(--soft);font-size:13.5px}
+.av{width:34px;height:34px;border-radius:50%;flex:none}
+.courier small{display:block;color:var(--muted);font-size:11.5px}
+.sep{height:1px;background:var(--line)}
+.count{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.count div{background:var(--soft);border-radius:14px;padding:8px 0;text-align:center}
+.count b{display:block;font-weight:600;font-size:22px}
+.count small{font-size:11px;color:var(--muted)}
+.checks{display:flex;flex-direction:column;gap:7px;font-size:14px;color:var(--ink-2)}
+.checks span::before{content:"✓";display:inline-grid;place-items:center;width:18px;height:18px;margin-right:8px;border-radius:50%;background:var(--lav);color:#6a5cf0;font-size:10px;font-weight:700}
+.amount{font-weight:600;font-size:46px;letter-spacing:-.03em;line-height:1}
+.kv{display:flex;justify-content:space-between;font-size:14px;padding:8px 0;border-bottom:1px solid var(--line)}
+.kv span{color:var(--muted)}
+.card .grad{position:absolute;inset:0;z-index:2;opacity:0;transition:opacity .7s;pointer-events:none;
+  background:radial-gradient(60% 50% at 20% 25%,#ffb3cd,transparent 70%),radial-gradient(55% 45% at 80% 30%,#b9a8ff,transparent 70%),
+             radial-gradient(60% 50% at 50% 85%,#9fd0ff,transparent 70%),radial-gradient(40% 40% at 75% 75%,#ffd2b3,transparent 70%),#f4efff;
+  background-size:180% 180%;animation:breathe 4.5s ease-in-out infinite alternate}
+.card.breathing .grad{opacity:1}
+.card[data-i="1"] .grad{animation-delay:-1.5s;filter:hue-rotate(-30deg)} .card[data-i="2"] .grad{animation-delay:-3s}
+.grad .tls{position:absolute;left:20px;right:20px;color:rgba(255,255,255,.92);--tl-size:15px}
+@keyframes breathe{0%{background-position:0% 0%}50%{background-position:100% 40%}100%{background-position:30% 100%}}
+
+/* =========================================================
+   SECTION — presets & skeletons
+   ========================================================= */
+.split{display:grid;grid-template-columns:380px 1fr;gap:28px;align-items:start}
+.seg{display:inline-flex;gap:3px;padding:4px;border-radius:999px;background:var(--soft)}
+.seg button{height:34px;padding:0 14px;border-radius:999px;font-weight:500;font-size:14px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(16,24,40,.06),0 4px 12px -4px rgba(16,24,40,.12)}
+.preset-info{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.preset-info div{background:var(--soft);border-radius:18px;padding:16px}
+.preset-info b{display:block;font-weight:600}
+.preset-info span{font-size:14px;color:var(--ink-2)}
+.sk-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.sk{border:1px solid var(--line);border-radius:22px;padding:16px;min-height:220px;display:flex;flex-direction:column;gap:12px;background:#fff}
+.sk-head{display:flex;justify-content:space-between;align-items:center}
+.sk-head b{font-weight:600;font-size:14px}
+.sk-slot{flex:1;font-size:14px;color:var(--ink-2);display:flex;flex-direction:column;gap:6px}
+.sk-slot .q{font-weight:600;font-size:17px;color:var(--ink);line-height:1.25}
+
+/* =========================================================
+   SECTION — install & API
+   ========================================================= */
+.steps{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.step{border:1px solid var(--line);border-radius:24px;padding:22px;background:#fff;display:flex;flex-direction:column;gap:14px}
+.step h3{font-weight:600;font-size:18px;display:flex;gap:10px;align-items:center}
+.step h3 i{font:500 12px var(--mono);font-style:normal;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--lav);color:#6a5cf0}
+.step p{color:var(--ink-2);font-size:15px}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 12px var(--mono);letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+td code,p code{font:13px var(--mono);background:var(--soft);padding:2px 7px;border-radius:7px;white-space:nowrap}
+.tbl{border:1px solid var(--line);border-radius:22px;overflow:auto;background:#fff}
+.api{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+
+/* =========================================================
+   SECTION — footer
+   ========================================================= */
+footer{margin-top:clamp(80px,10vw,128px);border-top:1px solid var(--line);padding:36px 0 48px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+footer img{height:12px}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+@media (max-width:1024px){
+  .cards{grid-template-columns:repeat(2,1fr)} .sk-grid{grid-template-columns:repeat(3,1fr)}
+  .split,.steps,.api{grid-template-columns:1fr}
+  .hero-cards .cardbox:nth-child(3){display:none}
+}
+@media (max-width:720px){
+  .links{display:none} .gh span{display:none}
+  .set-head{grid-template-columns:1fr} .set-actions{justify-content:flex-start} .status{text-align:left}
+  .cards{grid-template-columns:1fr} .sk-grid{grid-template-columns:1fr 1fr}
+  .hero-cards .cardbox:nth-child(1){display:none} .hero-cards .cardbox:nth-child(2){transform:none}
+  .install{font-size:12px;max-width:100%} .install span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .card{height:520px}
+}
+@media (max-width:420px){ .sk-grid{grid-template-columns:1fr} }
+.split>*,.cards>*,.steps>*,.api>*,.sk-grid>*{min-width:0}
+.sk-slot{min-width:0;overflow:hidden}
+.hero .card{text-align:left}
+@media (max-width:720px){.gh{margin-left:auto}.preset-info{grid-template-columns:1fr}.seg{flex-wrap:wrap;border-radius:18px}.code{font-size:12px}}
+</style>
+</head>
+<body>
+
+<!-- ====================== NAV ====================== -->
+<header class="nav" id="nav">
+  <div class="wrap">
+    <a class="brand" href="https://tomdesign.vn" target="_blank" rel="noopener" aria-label="Tomdesign"><img src="assets/tomdesign.svg" alt="Tomdesign"><span>TomLoad</span></a>
+    <nav class="links"><a href="#sets">Sets</a><a href="#presets">Presets</a><a href="#skeletons">Skeletons</a><a href="#install">Install</a><a href="#api">API</a></nav>
+    <a class="gh" href="https://github.com/johnny-bui/TomLoad" target="_blank" rel="noopener"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.72 1.23 1.88.87 2.34.67.07-.52.28-.87.51-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82A7.6 7.6 0 018 3.86c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg><span>GitHub</span></a>
+  </div>
+</header>
+
+<main>
+<!-- ====================== HERO ====================== -->
+<section class="hero">
+  <div class="glow"></div>
+  <div class="wrap">
+    <span class="chip"><i></i>Open source · MIT · by Tomdesign</span>
+    <h1>Loading states, <span>decoded.</span></h1>
+    <p class="lead">Glyph skeletons that paint instantly, ASCII mascots while data loads, and a decode-in reveal for text, images and canvases. Any element. Zero dependencies. ~7 KB.</p>
+    <div class="row">
+      <div class="install"><span><b>$</b> npm i github:johnny-bui/TomLoad</span><button data-copy="npm i github:johnny-bui/TomLoad">Copy</button></div>
+      <button class="btn dark" id="heroReplay"><span class="ico"></span>Replay</button>
+    </div>
+    <div class="hero-cards" id="heroCards"></div>
+    <div class="stats"><div><b>~7 KB</b><span>gzipped</span></div><div><b>0</b><span>dependencies</span></div><div><b>0 px</b><span>layout shift</span></div><div><b>6</b><span>mascots</span></div><div><b>5</b><span>skeleton styles</span></div></div>
+  </div>
+</section>
+
+<div id="sets"></div>
+<!-- ====================== SETS (rendered from SETS) ====================== -->
+<div id="setSections"></div>
+
+<!-- ====================== PRESETS ====================== -->
+<section class="set" id="presets">
+  <div class="wrap">
+    <div class="set-head">
+      <div><div class="eyebrow">04 — Presets</div><h2>One engine, <span>four glyph voices.</span></h2>
+        <p>Pick a preset, press Load. The same card scrambles out, shows a glyph field while “fetching”, then decodes in with the new voice.</p></div>
+      <div class="set-actions"><span class="status" id="pStatus">idle</span><button class="btn dark sm" id="pLoad"><span class="ico"></span>Load</button></div>
+    </div>
+    <div class="split">
+      <div id="presetCard"></div>
+      <div>
+        <div class="seg" role="group" aria-label="Preset" id="pSeg">
+          <button aria-pressed="true" data-p="ink">ink</button><button aria-pressed="false" data-p="dither">dither</button><button aria-pressed="false" data-p="spark">spark</button><button aria-pressed="false" data-p="binary">binary</button>
+        </div>
+        <div class="preset-info">
+          <div><b>ink</b><span>Condenses <code>.:-=+*#@</code>, then letters and digits. Product UI, dashboards.</span></div>
+          <div><b>dither</b><span>Shaded blocks <code>░▒▓█</code>; images keep their colors. Image-heavy cards.</span></div>
+          <div><b>spark</b><span><code>* + ✦ ✧</code> in the accent color. Festive and playful brands.</span></div>
+          <div><b>binary</b><span><code>0</code> and <code>1</code> in the accent color. Dev tools, fintech.</span></div>
+        </div>
+        <div class="code" style="margin-top:20px"><button class="copy">COPY</button><pre data-lang="js">const g = glyph(card, { preset: 'spark' });
+
+await g.hide();                 // scramble out
+g.loading(true);                // glyph field while fetching
+const data = await fetchProduct();
+render(card, data);
+g.loading(false);
+await g.reveal({ origin: 'top' });</pre></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== SKELETONS ====================== -->
+<section class="set" id="skeletons">
+  <div class="wrap">
+    <div class="set-head">
+      <div><div class="eyebrow">05 — Skeletons</div><h2>Paints on the first frame. <span>No JavaScript loop.</span></h2>
+        <p><code>skeleton()</code> returns static glyph rows with a pure-CSS sweep — it renders on the server and costs nothing while it waits. Press Load to swap each one for real data.</p></div>
+      <div class="set-actions"><button class="btn ghost sm" id="skReset">Reset</button><button class="btn dark sm" id="skLoad"><span class="ico"></span>Load</button></div>
+    </div>
+    <div class="sk-grid" id="skGrid"></div>
+    <div class="code" style="margin-top:22px"><button class="copy">COPY</button><pre data-lang="js">import { skeleton } from 'tomload';
+
+el.innerHTML = skeleton({ variant: 'braille', lines: 4 });   // dots · blocks · binary · braille · plus
+el.innerHTML = skeleton({ variant: 'blocks', rows: 8 });     // image / avatar block</pre></div>
+  </div>
+</section>
+
+<!-- ====================== INSTALL ====================== -->
+<section class="set" id="install">
+  <div class="wrap">
+    <div class="set-head"><div><div class="eyebrow">06 — Install</div><h2>Four steps. <span>Works with any stack.</span></h2></div></div>
+    <div class="steps">
+      <div class="step"><h3><i>1</i>Install</h3><p>From GitHub with npm, or drop the browser build into any page — WordPress, Webflow, plain HTML.</p>
+        <div class="code"><button class="copy">COPY</button><pre data-lang="sh">npm i github:johnny-bui/TomLoad
+
+# or, no build step
+&lt;script src="https://cdn.jsdelivr.net/gh/johnny-bui/TomLoad@main/dist/tomload.iife.js"&gt;&lt;/script&gt;</pre></div></div>
+      <div class="step"><h3><i>2</i>Paint a skeleton</h3><p>Static markup, shows instantly while your request is in flight.</p>
+        <div class="code"><button class="copy">COPY</button><pre data-lang="js">import { glyph, skeleton, mascots } from 'tomload';
+
+card.innerHTML = skeleton({ variant: 'dots', lines: 4 });</pre></div></div>
+      <div class="step"><h3><i>3</i>Load with a mascot</h3><p>Render the real markup, keep it hidden, show a mascot drawn through the glyph grid.</p>
+        <div class="code"><button class="copy">COPY</button><pre data-lang="js">card.innerHTML = renderProduct(data);
+const g = glyph(card, { preset: 'ink' });
+g.hide({ instant: true });
+g.loading(true, { mascot: mascots.phin });</pre></div></div>
+      <div class="step"><h3><i>4</i>Decode in</h3><p>Text, images and canvases land in place. Buttons and icons fade in on the wave.</p>
+        <div class="code"><button class="copy">COPY</button><pre data-lang="js">g.loading(false);
+await g.reveal({ origin: 'top', speed: 0.6 });</pre></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====================== API ====================== -->
+<section class="set" id="api">
+  <div class="wrap">
+    <div class="set-head"><div><div class="eyebrow">07 — API</div><h2>Small on purpose.</h2></div></div>
+    <div class="api">
+      <div class="tbl"><table>
+        <tr><th>Method</th><th>What it does</th></tr>
+        <tr><td><code>glyph(el, options)</code></td><td>Create a controller for any element.</td></tr>
+        <tr><td><code>reveal({ origin, speed })</code></td><td>Decode content in. Resolves when everything landed.</td></tr>
+        <tr><td><code>hide({ instant })</code></td><td>Scramble out, or hide instantly. Content stays in the DOM.</td></tr>
+        <tr><td><code>loading(on, { mascot })</code></td><td>Glyph field or mascot while data loads. Sets <code>aria-busy</code>.</td></tr>
+        <tr><td><code>update(options)</code></td><td>Change options, e.g. the preset.</td></tr>
+        <tr><td><code>destroy()</code></td><td>Stop and restore the element.</td></tr>
+        <tr><td><code>skeleton(spec)</code></td><td>Static glyph skeleton HTML with a CSS sweep.</td></tr>
+      </table></div>
+      <div class="tbl"><table>
+        <tr><th>Option</th><th>Default</th></tr>
+        <tr><td><code>preset</code></td><td><code>'ink'</code> · <code>'dither'</code> · <code>'spark'</code> · <code>'binary'</code> · object</td></tr>
+        <tr><td><code>speed</code></td><td><code>1</code> — wave speed multiplier</td></tr>
+        <tr><td><code>origin</code></td><td><code>'top'</code> · <code>'center'</code> · <code>'pointer'</code> · <code>{x, y}</code></td></tr>
+        <tr><td><code>accent</code></td><td><code>--tl-accent</code> — scramble glyph color</td></tr>
+        <tr><td><code>media</code></td><td><code>img, canvas, video, [data-tl="media"]</code></td></tr>
+        <tr><td><code>fades</code></td><td><code>button, svg, [data-tl="fade"]</code></td></tr>
+      </table></div>
+    </div>
+    <div class="code" style="margin-top:18px"><button class="copy">COPY</button><pre data-lang="js">// A mascot is any draw function: (ctx, width, height, seconds) =&gt; void
+const pulse = (ctx, w, h, t) =&gt; {
+  ctx.fillStyle = '#7b6cff';
+  ctx.beginPath();
+  ctx.arc(w / 2, h / 2, Math.min(w, h) * (0.25 + 0.05 * Math.sin(t * 4)), 0, Math.PI * 2);
+  ctx.fill();
+};
+g.loading(true, { mascot: pulse });</pre></div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="https://tomdesign.vn" target="_blank" rel="noopener"><img src="assets/tomdesign.svg" alt="Tomdesign"></a>
+    <span>TomLoad 0.1 · MIT © 2026 Tomdesign · Concept inspired by <a href="https://github.com/quanhoangindex/ascii-reveal" target="_blank" rel="noopener">ascii-reveal</a></span>
+  </div>
+</footer>
+
+<script src="tomload.iife.js"></script>
+<script>
+/* =========================================================
+   INIT — library, art, card data
+   ========================================================= */
+const { glyph, skeleton, mascots } = TomLoad;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const TAU = Math.PI * 2;
+const lin = (ctx, x0, y0, x1, y1, stops) => { const g = ctx.createLinearGradient(x0, y0, x1, y1); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; };
+const rad = (ctx, x, y, r, stops) => { const g = ctx.createRadialGradient(x, y, 0, x, y, r); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; };
+const rr = (ctx, x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
+const P_VN = 'ink', P_XMAS = 'spark', P_GRAD = 'dither';
+
+const ART = {
+  bottle(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, '#ffe9dc'], [1, '#ffd3c2']]); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = rad(ctx, W * .7, H * .28, W * .5, [[0, 'rgba(255,170,120,.9)'], [1, 'rgba(255,170,120,0)']]); ctx.fillRect(0, 0, W, H);
+    const bw = W * .26, bh = H * .66, bx = W / 2 - bw / 2, by = H * .22, nw = bw * .38;
+    ctx.save(); ctx.shadowColor = 'rgba(120,50,20,.35)'; ctx.shadowBlur = 50; ctx.shadowOffsetY = 26;
+    rr(ctx, W / 2 - nw / 2, by - H * .09, nw, H * .12, 10); ctx.fillStyle = '#2a1a12'; ctx.fill();
+    rr(ctx, bx, by, bw, bh, bw * .28); ctx.fillStyle = lin(ctx, bx, 0, bx + bw, 0, [[0, '#2b170c'], [.45, '#6b3818'], [1, '#22120a']]); ctx.fill(); ctx.restore();
+    ctx.fillStyle = 'rgba(255,240,225,.28)'; ctx.fillRect(bx + bw * .12, by + 30, bw * .12, bh - 60);
+    ctx.fillStyle = '#fff6ee'; ctx.fillRect(bx, by + bh * .4, bw, bh * .26);
+    ctx.fillStyle = '#2a1a12'; ctx.textAlign = 'center';
+    ctx.font = `600 ${bw * .15}px Figtree, sans-serif`; ctx.fillText('SAIGON', W / 2, by + bh * .52);
+    ctx.font = `500 ${bw * .075}px "JetBrains Mono", monospace`; ctx.fillText('COLD BREW', W / 2, by + bh * .6);
+  },
+  lanterns(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, '#1b1f4a'], [.7, '#3b2a5c'], [1, '#6b3a4f']]); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,200,140,.15)'; for (let i = 0; i < 40; i++) ctx.fillRect((i * 97) % W, (i * 53) % (H * .5), 2, 2);
+    const L = [[.18, .3, 1], [.42, .22, 1.25], [.68, .34, .95], [.86, .2, .8], [.3, .55, .7], [.58, .6, .85]];
+    for (const [x, y, s] of L) {
+      const cx = W * x, cy = H * y, r = W * .07 * s;
+      ctx.strokeStyle = 'rgba(255,220,180,.35)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, cy - r); ctx.stroke();
+      ctx.fillStyle = rad(ctx, cx, cy, r * 3, [[0, 'rgba(255,170,90,.45)'], [1, 'rgba(255,170,90,0)']]); ctx.fillRect(cx - r * 3, cy - r * 3, r * 6, r * 6);
+      ctx.fillStyle = rad(ctx, cx, cy, r, [[0, '#ffe2a3'], [.6, '#ff8a3d'], [1, '#d9472b']]); ctx.beginPath(); ctx.ellipse(cx, cy, r * .85, r, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#2a1408'; ctx.fillRect(cx - r * .4, cy - r - 4, r * .8, 6); ctx.fillRect(cx - r * .4, cy + r - 2, r * .8, 6);
+    }
+    ctx.fillStyle = 'rgba(20,14,30,.85)'; ctx.beginPath(); ctx.moveTo(0, H);
+    for (let x = 0; x <= W; x += 10) ctx.lineTo(x, H * .82 + Math.sin(x / 30) * 3); ctx.lineTo(W, H); ctx.fill();
+    ctx.fillStyle = 'rgba(255,170,90,.25)'; for (let i = 0; i < 6; i++) ctx.fillRect(W * (.1 + i * .15), H * .86, W * .06, 3);
+  },
+  candles(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, '#f6efe6'], [1, '#e8dccd']]); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = rad(ctx, W / 2, H * .38, W * .5, [[0, 'rgba(255,190,110,.55)'], [1, 'rgba(255,190,110,0)']]); ctx.fillRect(0, 0, W, H);
+    const C = [[.3, .46, '#2f5d4a'], [.5, .36, '#b8423a'], [.7, .5, '#e9e2d6']];
+    for (const [x, top, col] of C) {
+      const cw = W * .15, cx = W * x - cw / 2, cy = H * top;
+      ctx.save(); ctx.shadowColor = 'rgba(60,40,20,.25)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 14;
+      rr(ctx, cx, cy, cw, H * .86 - cy, 10); ctx.fillStyle = col; ctx.fill(); ctx.restore();
+      ctx.fillStyle = 'rgba(255,255,255,.18)'; ctx.fillRect(cx + cw * .12, cy + 8, cw * .1, H * .86 - cy - 16);
+      ctx.fillStyle = '#3a2a1a'; ctx.fillRect(W * x - 1.5, cy - 14, 3, 14);
+      ctx.fillStyle = rad(ctx, W * x, cy - 26, 26, [[0, '#fff3c4'], [.5, '#ffb547'], [1, 'rgba(255,140,40,0)']]);
+      ctx.beginPath(); ctx.ellipse(W * x, cy - 26, 10, 20, 0, 0, TAU); ctx.fill();
+    }
+    ctx.fillStyle = '#d9cbb8'; ctx.fillRect(0, H * .86, W, H * .14);
+    ctx.strokeStyle = '#2f5d4a'; ctx.lineWidth = 4; for (let i = 0; i < 7; i++) { ctx.beginPath(); ctx.moveTo(W * .05 + i * 18, H * .9); ctx.lineTo(W * .05 + i * 18 + 10, H * .84); ctx.stroke(); }
+  },
+  ornaments(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, W, H, [[0, '#1f3b33'], [1, '#13261f']]); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = 'rgba(255,255,255,.7)'; for (let i = 0; i < 60; i++) { ctx.beginPath(); ctx.arc((i * 71) % W, (i * 137) % H, 1 + (i % 3), 0, TAU); ctx.fill(); }
+    const O = [[.22, .42, '#e5484d'], [.5, .58, '#f2c14e'], [.78, .38, '#d9dde8']];
+    for (const [x, y, c] of O) {
+      const cx = W * x, cy = H * y, r = W * .1;
+      ctx.strokeStyle = 'rgba(242,193,78,.6)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(cx, 0); ctx.lineTo(cx, cy - r); ctx.stroke();
+      ctx.fillStyle = '#c9a54a'; ctx.fillRect(cx - r * .22, cy - r - 8, r * .44, 12);
+      ctx.fillStyle = rad(ctx, cx - r * .35, cy - r * .35, r * 1.4, [[0, '#fff'], [.18, c], [1, '#0b0b0b']]); ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fill();
+    }
+  },
+  orb(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, W, H, [[0, '#f7f2ff'], [1, '#eef4ff']]); ctx.fillRect(0, 0, W, H);
+    const r = Math.min(W, H) * .32;
+    ctx.fillStyle = rad(ctx, W / 2, H / 2, r * 1.9, [[0, 'rgba(185,168,255,.5)'], [1, 'rgba(185,168,255,0)']]); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = rad(ctx, W * .42, H * .4, r * 1.3, [[0, '#ffffff'], [.25, '#ffc1d6'], [.6, '#a99bff'], [1, '#6fb5ff']]);
+    ctx.beginPath(); ctx.arc(W / 2, H / 2, r, 0, TAU); ctx.fill();
+  },
+  earbuds(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, 0, H, [[0, '#fff1f6'], [1, '#efeaff']]); ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = rad(ctx, W / 2, H * .55, W * .6, [[0, 'rgba(169,155,255,.35)'], [1, 'rgba(169,155,255,0)']]); ctx.fillRect(0, 0, W, H);
+    rr(ctx, W * .22, H * .62, W * .56, H * .2, H * .1); ctx.fillStyle = lin(ctx, 0, H * .62, 0, H * .82, [[0, '#ffffff'], [1, '#dcd6f2']]); ctx.fill();
+    for (const [x, rot] of [[.38, -.4], [.62, .4]]) {
+      ctx.save(); ctx.translate(W * x, H * .42); ctx.rotate(rot);
+      ctx.shadowColor = 'rgba(80,60,160,.3)'; ctx.shadowBlur = 30; ctx.shadowOffsetY = 16;
+      ctx.fillStyle = rad(ctx, -W * .03, -W * .03, W * .14, [[0, '#ffffff'], [.5, '#f1ecff'], [1, '#bfb3f3']]);
+      ctx.beginPath(); ctx.ellipse(0, 0, W * .09, W * .11, 0, 0, TAU); ctx.fill();
+      ctx.shadowColor = 'transparent'; rr(ctx, -W * .03, W * .06, W * .06, W * .14, W * .03); ctx.fill();
+      ctx.restore();
+    }
+  },
+  check(ctx, W, H) {
+    ctx.fillStyle = lin(ctx, 0, 0, W, H, [[0, '#ffe3ee'], [.5, '#ece4ff'], [1, '#dcecff']]); ctx.fillRect(0, 0, W, H);
+    const r = Math.min(W, H) * .28;
+    ctx.fillStyle = rad(ctx, W / 2, H / 2, r, [[0, '#ffffff'], [1, '#f4f1ff']]); ctx.beginPath(); ctx.arc(W / 2, H / 2, r, 0, TAU); ctx.fill();
+    ctx.strokeStyle = '#6a5cf0'; ctx.lineWidth = r * .14; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(W / 2 - r * .4, H / 2); ctx.lineTo(W / 2 - r * .08, H / 2 + r * .32); ctx.lineTo(W / 2 + r * .45, H / 2 - r * .3); ctx.stroke();
+  },
+  // small thumbnails
+  banhmi(ctx, W, H) { ctx.fillStyle = '#fff1df'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#d98a3a'; ctx.beginPath(); ctx.ellipse(W / 2, H / 2, W * .38, H * .2, -.3, 0, TAU); ctx.fill(); ctx.fillStyle = '#6fae4f'; ctx.fillRect(W * .25, H * .46, W * .5, H * .06); ctx.fillStyle = '#f2c38a'; ctx.fillRect(W * .3, H * .38, W * .4, H * .05); },
+  coffee(ctx, W, H) { ctx.fillStyle = '#efe7ff'; ctx.fillRect(0, 0, W, H); rr(ctx, W * .32, H * .25, W * .36, H * .52, 6); ctx.fillStyle = lin(ctx, 0, H * .25, 0, H * .77, [[0, '#e9d7bf'], [.4, '#a76b3b'], [1, '#5a3418']]); ctx.fill(); ctx.fillStyle = '#ffffff'; ctx.fillRect(W * .55, H * .12, W * .04, H * .3); },
+  rolls(ctx, W, H) { ctx.fillStyle = '#e7f5ec'; ctx.fillRect(0, 0, W, H); for (const [x, y] of [[.38, .45], [.6, .58]]) { ctx.save(); ctx.translate(W * x, H * y); ctx.rotate(-.5); rr(ctx, -W * .2, -H * .08, W * .4, H * .16, H * .08); ctx.fillStyle = '#f0c27b'; ctx.fill(); ctx.restore(); } },
+  candle(ctx, W, H) { ctx.fillStyle = '#fbefe6'; ctx.fillRect(0, 0, W, H); rr(ctx, W * .36, H * .38, W * .28, H * .44, 4); ctx.fillStyle = '#b8423a'; ctx.fill(); ctx.fillStyle = '#ffb547'; ctx.beginPath(); ctx.ellipse(W / 2, H * .28, W * .06, H * .1, 0, 0, TAU); ctx.fill(); },
+  socks(ctx, W, H) { ctx.fillStyle = '#e9f1ff'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = '#e5484d'; ctx.beginPath(); ctx.moveTo(W * .4, H * .15); ctx.lineTo(W * .6, H * .15); ctx.lineTo(W * .6, H * .62); ctx.quadraticCurveTo(W * .6, H * .85, W * .32, H * .82); ctx.quadraticCurveTo(W * .2, H * .7, W * .4, H * .6); ctx.fill(); ctx.fillStyle = '#fff'; ctx.fillRect(W * .4, H * .15, W * .2, H * .1); },
+  bauble(ctx, W, H) { ctx.fillStyle = '#eef6f1'; ctx.fillRect(0, 0, W, H); ctx.fillStyle = rad(ctx, W * .42, H * .45, W * .4, [[0, '#fff'], [.2, '#2f7a4f'], [1, '#143a26']]); ctx.beginPath(); ctx.arc(W / 2, H * .55, W * .26, 0, TAU); ctx.fill(); ctx.fillStyle = '#c9a54a'; ctx.fillRect(W * .43, H * .22, W * .14, H * .1); },
+};
+
+function paint(root) { $$('canvas[data-art]', root).forEach((cv) => { const r = cv.getBoundingClientRect(), d = 2; cv.width = Math.round(r.width * d); cv.height = Math.round(r.height * d); ART[cv.dataset.art](cv.getContext('2d'), cv.width, cv.height); }); }
+
+const LOGO = {
+  phin: `<span class="logo" style="background:#2a1a12"><svg viewBox="0 0 24 24"><path d="M6 6h12l-2 7H8z M4 14h16" stroke="#ffd3c2" stroke-width="2" fill="none" stroke-linejoin="round"/><circle cx="12" cy="19" r="1.6" fill="#ff8a3d"/></svg></span>`,
+  banhmi: `<span class="logo" style="background:#ffe6d6"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="5" transform="rotate(-20 12 12)" fill="#d98a3a"/><path d="M6 13l12-4" stroke="#6fae4f" stroke-width="2"/></svg></span>`,
+  lantern: `<span class="logo" style="background:#1b1f4a"><svg viewBox="0 0 24 24"><path d="M12 2v3" stroke="#ffd39a" stroke-width="1.6"/><ellipse cx="12" cy="12" rx="6" ry="7" fill="#ff8a3d"/><path d="M8 5h8M8 19h8" stroke="#ffd39a" stroke-width="2"/></svg></span>`,
+  frost: `<span class="logo" style="background:#1f3b33"><svg viewBox="0 0 24 24"><path d="M12 3l7 12H5z" fill="#3f9a63"/><path d="M12 9l5 9H7z" fill="#2f7a4f"/><circle cx="12" cy="3.5" r="1.6" fill="#f2c14e"/></svg></span>`,
+  post: `<span class="logo" style="background:#ffe7ec"><svg viewBox="0 0 24 24"><rect x="4" y="8" width="16" height="12" rx="2" fill="#e5484d"/><path d="M12 8v12M4 12h16" stroke="#f2c14e" stroke-width="2"/></svg></span>`,
+  sale: `<span class="logo" style="background:#13261f"><svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20M5 5l14 14M19 5L5 19" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/></svg></span>`,
+  lumen: `<span class="logo" style="background:#f4f1ff"><svg viewBox="0 0 24 24"><defs><linearGradient id="lg" x1="0" x2="1"><stop offset="0" stop-color="#ff9cbc"/><stop offset=".5" stop-color="#a99bff"/><stop offset="1" stop-color="#6fb5ff"/></linearGradient></defs><circle cx="12" cy="12" r="8" fill="none" stroke="url(#lg)" stroke-width="3.4"/></svg></span>`,
+  aura: `<span class="logo" style="background:#1d2130"><svg viewBox="0 0 24 24"><path d="M5 19L12 5l7 14" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="15" r="2" fill="#a99bff"/></svg></span>`,
+  pay: `<span class="logo" style="background:#e8f7ef"><svg viewBox="0 0 24 24"><path d="M6 12.5l4 4 8-9" stroke="#1f9d63" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>`,
+};
+const head = (logo, name, sub, chip, cls = '') => `<div class="c-head">${LOGO[logo]}<div><b>${name}</b><small>${sub}</small></div><span class="chip ${cls}">${chip}</span></div>`;
+const row = (art, name, sub, price) => `<div class="row"><canvas data-art="${art}"></canvas><div class="grow"><b>${name}</b><small>${sub}</small></div><b>${price}</b></div>`;
+
+const SETS = {
+  vn: {
+    title: ['Skeletons with a local accent.', 'Vietnam set — coffee filter, conical hat, lantern.'],
+    preset: P_VN, mode: 'mascot',
+    cards: [
+      { cap: '&lt;ProductCard mascot={phin}/&gt;', mascot: 'phin', html: `${head('phin', 'Phin &amp; Co.', 'Saigon, Vietnam', 'New')}
+        <div class="media"><canvas data-art="bottle"></canvas></div>
+        <div><div class="t1">Saigon Cold Brew</div><div class="t2">18-hour slow drip · 250 ml · Single-origin Arabica</div></div>
+        <div class="foot"><span class="price">$4.50</span><button class="btn" data-cta="Added to bag ✓">Add to bag</button></div>` },
+      { cap: '&lt;OrderCard mascot={hat}/&gt;', mascot: 'hat', html: `${head('banhmi', 'Banh Mi Club', 'Order #VN-2047', 'On the way', 'live')}
+        <div class="rows">${row('banhmi', 'Classic Banh Mi', 'Pork, pâté, herbs · ×2', '$9.00')}${row('coffee', 'Iced Milk Coffee', 'Less sugar · ×1', '$3.50')}${row('rolls', 'Fresh Spring Rolls', 'Peanut dip · ×1', '$5.00')}</div>
+        <div class="sep"></div><div class="track"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="meta"><span>Arriving 12:40</span><span>1.2 km away</span></div>
+        <div class="courier"><span class="av" style="background:linear-gradient(135deg,#ffb38a,#ff7a9c)"></span><div>Minh is on the way<small>★ 4.9 · Honda Wave</small></div></div>
+        <div class="foot" style="margin-top:auto"><span class="price">$17.50</span><button class="btn ghost">Track order</button></div>` },
+      { cap: '&lt;ExperienceCard mascot={lantern}/&gt;', mascot: 'lantern', html: `${head('lantern', 'Lantern Trails', 'Hoi An Old Town', '★ 4.9')}
+        <div class="media"><canvas data-art="lanterns"></canvas></div>
+        <div><div class="t1">Hoi An Lantern Night</div><div class="t2">3 hours · Boat ride · Local guide included</div></div>
+        <div class="foot"><span class="price">$38 <small>/ person</small></span><button class="btn dark">Book</button></div>` },
+    ],
+    click: 0,
+  },
+  xmas: {
+    title: ['Holiday-ready loading.', 'Christmas set — snowman, tree, gift.'],
+    preset: P_XMAS, mode: 'mascot',
+    cards: [
+      { cap: '&lt;ProductCard mascot={tree}/&gt;', mascot: 'tree', html: `${head('frost', 'Frost &amp; Fir', 'Holiday Collection', 'Gift pick', 'hot')}
+        <div class="media"><canvas data-art="candles"></canvas></div>
+        <div><div class="t1">Nordic Candle Trio</div><div class="t2">Pine, cedar &amp; cinnamon · Gift-wrapped</div></div>
+        <div class="foot"><span class="price">$29</span><button class="btn">Add to bag</button></div>` },
+      { cap: '&lt;OrderCard mascot={gift}/&gt;', mascot: 'gift', html: `${head('post', 'North Post', 'Order #XM-1224', 'Out for delivery', 'live')}
+        <div class="rows">${row('candle', 'Nordic Candle Trio', 'Gift-wrapped · ×1', '$29.00')}${row('socks', 'Wool Socks', 'Red · Size M · ×2', '$24.00')}${row('bauble', 'Glass Ornament Set', 'Forest green · ×1', '$11.00')}</div>
+        <div class="sep"></div><div class="track"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
+        <div class="meta"><span>Arrives Dec 23</span><span>Before 6 PM</span></div>
+        <div class="courier"><span class="av" style="background:linear-gradient(135deg,#ff9cbc,#e5484d)"></span><div>Your gift is on its way<small>Leave at door · Ring twice</small></div></div>
+        <div class="foot" style="margin-top:auto"><span class="price">$64.00</span><button class="btn ghost">Track order</button></div>` },
+      { cap: '&lt;PromoCard mascot={snowman}/&gt;', mascot: 'snowman', html: `${head('sale', 'Frost &amp; Fir', 'Holiday Sale', 'Ends soon', 'hot')}
+        <div class="media" style="flex:.9"><canvas data-art="ornaments"></canvas></div>
+        <div><div class="t1">30% off everything</div><div class="t2">Free gift wrap on all orders over $40.</div></div>
+        <div class="count"><div><b>02</b><small>days</small></div><div><b>14</b><small>hours</small></div><div><b data-tick>08</b><small>minutes</small></div></div>
+        <button class="btn dark" data-cta="Code FROST30 copied ✓">Claim offer</button>` },
+    ],
+    click: 2,
+  },
+  grad: {
+    title: ['Gradients that breathe.', 'Motion set — no gray boxes, ever.'],
+    preset: P_GRAD, mode: 'gradient',
+    cards: [
+      { cap: '&lt;PlanCard skeleton="gradient"/&gt;', html: `${head('lumen', 'Lumen', 'Workspace', 'Pro')}
+        <div class="media" style="flex:.85"><canvas data-art="orb"></canvas></div>
+        <div><div class="t1">Lumen Pro</div><div class="t2">Everything your team needs to ship faster.</div></div>
+        <div class="checks"><span>Unlimited projects</span><span>AI summaries</span><span>Priority support</span></div>
+        <div class="foot"><span class="price">$12 <small>/ month</small></span><button class="btn" data-cta="You're on Pro ✓">Upgrade</button></div>` },
+      { cap: '&lt;ProductCard skeleton="gradient"/&gt;', html: `${head('aura', 'Aura Audio', 'Studio Series', 'Bestseller')}
+        <div class="media"><canvas data-art="earbuds"></canvas></div>
+        <div><div class="t1">Aura Buds Pro</div><div class="t2">Spatial audio · 30-hour battery · Lilac</div></div>
+        <div class="foot"><span class="price">$149</span><button class="btn dark">Add to bag</button></div>` },
+      { cap: '&lt;ReceiptCard skeleton="gradient"/&gt;', html: `${head('pay', 'Payment received', 'Today, 10:42 AM', 'Paid', 'live')}
+        <div class="media" style="flex:.8"><canvas data-art="check"></canvas></div>
+        <div><div class="t2" style="margin:0 0 .3rem">Total charged</div><div class="amount">$149.00</div></div>
+        <div><div class="kv"><span>Order</span>#AU-0331</div><div class="kv"><span>Method</span>Apple Pay</div><div class="kv" style="border:0"><span>Delivery</span>Ships in 2 days</div></div>
+        <button class="btn ghost">View receipt</button>` },
+    ],
+    click: 0,
+  },
+};
+
+const SET_ORDER = [['vn', '01 — Vietnam set'], ['xmas', '02 — Holiday set'], ['grad', '03 — Gradient set']];
+const SET_COPY = {
+  vn:   { desc: 'ASCII mascots drawn from Vietnamese everyday life — a dripping coffee filter, a conical hat over rice fields, a swinging lantern — while each card loads.',
+          code: `import { glyph, mascots } from 'tomload';\n\nconst g = glyph(card, { preset: 'ink' });\ng.hide({ instant: true });\ng.loading(true, { mascot: mascots.phin });   // hat · lantern\n\nawait fetchData();\ng.loading(false);\nawait g.reveal({ origin: 'top', speed: 0.6 });` },
+  xmas: { desc: 'A snowman in falling snow, a tree with twinkling lights and a hopping gift box — seasonal loading without shipping a single image.',
+          code: `const g = glyph(card, { preset: 'spark' });\ng.hide({ instant: true });\ng.loading(true, { mascot: mascots.snowman });   // tree · gift\n\nawait fetchData();\ng.loading(false);\nawait g.reveal();` },
+  grad: { desc: 'A breathing pastel gradient with glyph rows on top. When data lands the gradient melts away and images decode through shaded blocks.',
+          code: `card.classList.add('breathing');                     // your CSS gradient\ngrad.innerHTML = skeleton({ variant: 'braille', lines: 4 });\nconst g = glyph(slot, { preset: 'dither' });\ng.hide({ instant: true });\n\nawait fetchData();\ncard.classList.remove('breathing');\nawait g.reveal();` },
+};
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+/** Tiny highlighter for the snippets. */
+function highlight(pre) {
+  const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const src = pre.textContent;
+  const re = /(\/\/[^\n]*|#[^\n]*)|('[^'\n]*'|"[^"\n]*"|`[^`]*`)|\b(import|from|const|await|async|new|return|true|false)\b|(&lt;\/?[\w-]+|<\/?[\w-]+)|\b(\d+(?:\.\d+)?)\b/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    const cls = m[1] ? 'c' : m[2] ? 's' : m[3] ? 'k' : m[4] ? 't' : 'n';
+    out += `<span class="${cls}">${esc(m[0])}</span>`;
+    last = m.index + m[0].length;
+  }
+  pre.innerHTML = out + esc(src.slice(last));
+}
+
+function cardHTML(S, c, i) {
+  return `<div class="cardbox"><article class="card" data-i="${i}">
+    ${S.mode === 'gradient' ? `<div class="grad">${skeleton({ variant: 'braille', lines: 4, seed: i + 4 }).replace('class="tls', 'style="top:24px" class="tls')}${skeleton({ variant: 'dots', lines: 4, seed: i + 9 }).replace('class="tls', 'style="bottom:24px" class="tls')}</div>` : ''}
+    <div class="slot">${c.html}</div></article><div class="cap">${c.cap}</div></div>`;
+}
+
+/** Full load cycle for a list of cards: scramble out → loading state → decode in. */
+async function loadCycle(S, cards, setStatus) {
+  const ctls = cards.map((card) => glyph($('.slot', card), { preset: S.preset }));
+  setStatus('scrambling…');
+  await Promise.all(ctls.map((g) => g.hide({ speed: 1.8 })));
+  setStatus(S.mode === 'gradient' ? 'breathing…' : 'loading…');
+  cards.forEach((card, i) => S.mode === 'mascot' ? ctls[i].loading(true, { mascot: mascots[S.cards[+card.dataset.i].mascot] }) : card.classList.add('breathing'));
+  await sleep(2400);
+  setStatus('decoding…');
+  for (const [i, card] of cards.entries()) {
+    if (S.mode === 'mascot') ctls[i].loading(false); else card.classList.remove('breathing');
+    ctls[i].reveal({ origin: 'top', speed: 0.6 }).then(() => ctls[i].destroy());
+    await sleep(320);
+  }
+  await sleep(1400);
+}
+
+/* =========================================================
+   COMPONENTS — builders
+   ========================================================= */
+function buildSets() {
+  $('#setSections').innerHTML = SET_ORDER.map(([key, eyebrow]) => {
+    const S = SETS[key], C = SET_COPY[key];
+    return `<section class="set" data-set="${key}"><div class="glow"></div><div class="wrap">
+      <div class="set-head"><div><div class="eyebrow">${eyebrow}</div><h2>${S.title[0].replace(/\.$/, '.')} <span>${S.title[1].split(' — ')[1] ? S.title[1].split(' — ')[1].replace(/^./, (c) => c.toUpperCase()) : ''}</span></h2><p>${C.desc}</p></div>
+        <div class="set-actions"><span class="status">ready</span><button class="btn ghost sm" data-code>&lt;/&gt; Code</button><button class="btn dark sm" data-load><span class="ico"></span>Load</button></div></div>
+      <div class="cards">${S.cards.map((c, i) => cardHTML(S, c, i)).join('')}</div>
+      <div class="set-code"><div class="code"><button class="copy">COPY</button><pre data-lang="js">${C.code.replace(/</g, '&lt;')}</pre></div></div>
+    </div></section>`;
+  }).join('');
+}
+
+const SK = [
+  { v: 'dots', title: 'Review', html: '<p class="q">“Loading finally feels on-brand.”</p><span>Minh Anh · Product designer</span>' },
+  { v: 'blocks', title: 'Order', html: '<p class="q">#SG-2047 is on the way</p><span>3 items · ETA 14:20</span>' },
+  { v: 'binary', title: 'Deploy', html: '<p class="q">Build 482 passed</p><span>main · 1m 12s · 0 warnings</span>' },
+  { v: 'braille', title: 'Profile', html: '<p class="q">Lan Pham</p><span>Ho Chi Minh City · 1.2k followers</span>' },
+  { v: 'plus', title: 'Invoice', html: '<p class="q">$1,280.00 paid</p><span>INV-0091 · Oct 25</span>' },
+];
+function buildSkeletons() {
+  $('#skGrid').innerHTML = SK.map((s, i) => `<div class="sk" data-k="${i}"><div class="sk-head"><b>${s.title}</b><span class="chip">${s.v}</span></div><div class="sk-slot"></div></div>`).join('');
+  resetSkeletons();
+}
+function resetSkeletons() { $$('.sk-slot').forEach((el, i) => (el.innerHTML = skeleton({ variant: SK[i].v, lines: 5, seed: i + 2, chars: 40 }))); }
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+function bindSets() {
+  $$('section[data-set]').forEach((sec) => {
+    const S = SETS[sec.dataset.set], cards = $$('.card', sec), btn = $('[data-load]', sec), st = $('.status', sec);
+    const setStatus = (t) => { st.textContent = t; st.classList.toggle('busy', t !== 'ready'); };
+    btn.addEventListener('click', async () => {
+      btn.disabled = true;
+      await loadCycle(S, cards, setStatus);
+      setStatus('ready'); btn.disabled = false;
+      btn.innerHTML = '<span class="ico"></span>Load again';
+    });
+    $('[data-code]', sec).addEventListener('click', () => $('.set-code', sec).classList.toggle('open'));
+  });
+  // first view: decode each set once as it scrolls in
+  const io = new IntersectionObserver((es) => es.forEach((e) => {
+    if (!e.isIntersecting) return; io.unobserve(e.target);
+    $$('.slot', e.target).forEach((slot, i) => { const g = glyph(slot, { preset: SETS[e.target.dataset.set].preset }); g.hide({ instant: true }); setTimeout(() => g.reveal({ origin: 'top', speed: .7 }).then(() => g.destroy()), i * 200); });
+  }), { threshold: .25 });
+  $$('section[data-set]').forEach((s) => io.observe(s));
+}
+
+function bindHero() {
+  const S = SETS.vn, H = SETS.grad;
+  const picks = [[H, 1], [S, 0], [SETS.xmas, 0]];
+  $('#heroCards').innerHTML = picks.map(([set, i], k) => cardHTML(set, set.cards[i], k).replace(/<div class="cap">.*?<\/div><\/div>$/s, '</div>')).join('');
+  paint($('#heroCards'));
+  const run = async () => {
+    const slots = $$('#heroCards .slot');
+    $('#heroReplay').disabled = true;
+    const gs = slots.map((s, k) => glyph(s, { preset: picks[k][0].preset }));
+    gs.forEach((g) => g.hide({ instant: true }));
+    gs.forEach((g, k) => g.loading(true, { mascot: mascots[['lantern', 'phin', 'tree'][k]] }));
+    await sleep(1500);
+    for (const g of gs) { g.loading(false); g.reveal({ origin: 'top', speed: .6 }).then(() => g.destroy()); await sleep(260); }
+    await sleep(1200); $('#heroReplay').disabled = false;
+  };
+  $('#heroReplay').addEventListener('click', run);
+  run();
+}
+
+function bindPresets() {
+  const S = SETS.grad;
+  $('#presetCard').innerHTML = cardHTML({ ...S, mode: 'mascot' }, S.cards[1], 0);
+  let preset = 'ink';
+  $$('#pSeg button').forEach((b) => b.addEventListener('click', () => { preset = b.dataset.p; $$('#pSeg button').forEach((x) => x.setAttribute('aria-pressed', x === b)); }));
+  $('#pLoad').addEventListener('click', async () => {
+    const btn = $('#pLoad'), st = $('#pStatus'); btn.disabled = true;
+    const g = glyph($('#presetCard .slot'), { preset });
+    st.textContent = 'scrambling…'; st.classList.add('busy');
+    await g.hide({ speed: 1.8 });
+    st.textContent = 'loading…'; g.loading(true); await sleep(1600);
+    g.loading(false); st.textContent = 'decoding…';
+    await g.reveal({ origin: 'top', speed: .7 }); g.destroy();
+    st.textContent = 'idle'; st.classList.remove('busy'); btn.disabled = false;
+  });
+}
+
+function bindSkeletons() {
+  $('#skLoad').addEventListener('click', async () => {
+    for (const [i, el] of $$('.sk-slot').entries()) {
+      if (!el.querySelector('.tls')) continue;
+      el.innerHTML = SK[i].html;
+      const g = glyph(el, { preset: ['ink', 'dither', 'binary', 'ink', 'spark'][i] });
+      g.hide({ instant: true }); g.reveal({ origin: 'top' }).then(() => g.destroy());
+      await sleep(220);
+    }
+  });
+  $('#skReset').addEventListener('click', resetSkeletons);
+}
+
+function bindChrome() {
+  addEventListener('scroll', () => $('#nav').classList.toggle('scrolled', scrollY > 8), { passive: true });
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.copy, [data-copy]'); if (!b) return;
+    const text = b.dataset.copy || b.parentElement.querySelector('pre').textContent;
+    navigator.clipboard?.writeText(text).then(() => { const o = b.textContent; b.textContent = 'Copied'; setTimeout(() => (b.textContent = o), 1200); });
+  });
+}
+
+/* =========================================================
+   INIT — boot
+   ========================================================= */
+function boot() {
+  buildSets(); buildSkeletons();
+  $$('section[data-set]').forEach((s) => paint(s));
+  bindSets(); bindHero(); bindPresets(); bindSkeletons(); bindChrome();
+  paint($('#presetCard'));
+  $$('pre[data-lang]').forEach(highlight);
+}
+(document.fonts ? document.fonts.ready : Promise.resolve()).then(boot);
+</script>
+</body>
+</html>
