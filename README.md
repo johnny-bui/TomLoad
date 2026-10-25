@@ -133,10 +133,6 @@ npm run dev       # serves docs/ locally
 - Images must be same-origin (or CORS-enabled) to be sampled into glyphs; otherwise they simply fade in.
 - One canvas per running element; one shared animation loop for all instances.
 
-## Credits
-
-Concept inspired by [ascii-reveal](https://github.com/quanhoangindex/ascii-reveal) by Quan Hoang. TomLoad is an independent implementation with its own engine, API, skeleton and mascots.
-
 ## License
 
 MIT © 2026 Tomdesign (Johnny Bui)
