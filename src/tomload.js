@@ -371,7 +371,30 @@ export function glyph(scope, options = {}) {
     });
   }
 
-  /* ---------- loading: glyph field or mascot ---------- */
+  /* ---------- loading: content-shaped glyph field, or a small mascot ---------- */
+  /** Rectangles of what is about to appear: one per text line, one per image/canvas, one per button. */
+  function contentRects() {
+    const m = measure(scope, host, opts);
+    const rects = [];
+    const lines = new Map();
+    for (const c of m.chars) {
+      const key = Math.round(c.y / 4) + ':' + Math.round(c.size);
+      const r = lines.get(key);
+      if (!r) lines.set(key, { x: c.x, y: c.y, x1: c.x + c.w, h: c.h, size: c.size });
+      else { r.x = Math.min(r.x, c.x); r.x1 = Math.max(r.x1, c.x + c.w); }
+    }
+    for (const r of lines.values()) {
+      const pad = r.h * 0.18;                                     // text box → glyph bar of the same rhythm
+      rects.push({ x: r.x, y: r.y + pad, w: r.x1 - r.x, h: r.h - pad * 2, kind: 'text' });
+    }
+    for (const md of m.media) rects.push({ x: md.x, y: md.y, w: md.w, h: md.h, kind: 'media' });
+    for (const f of m.fades) {
+      const b = f.el.getBoundingClientRect(), H = m.H;
+      rects.push({ x: b.left - H.left, y: b.top - H.top, w: b.width, h: b.height, kind: 'fade' });
+    }
+    return { H: m.H, rects };
+  }
+
   function loading(on, o = {}) {
     if (!on) {
       if (load) load.stopAt = performance.now();
@@ -382,22 +405,29 @@ export function glyph(scope, options = {}) {
     host.setAttribute('aria-busy', 'true');
     if (reduced()) return;
     const P = preset();
-    const H = host.getBoundingClientRect();
+    const { H, rects } = contentRects();
     if (H.width < 8 || H.height < 8) return;                     // not rendered (display:none) → nothing to draw
     const { c: layer, ctx } = makeLayer(host, H);
-    const cell = o.cell || 7, cw = cell * 0.62;
-    const cols = Math.floor(H.width / cw), rows = Math.floor(H.height / cell);
-    const ox = (H.width - cols * cw) / 2, oy = (H.height - rows * cell) / 2;
-    const s = cw / 2;                                             // square sample pixels
-    const off = document.createElement('canvas');
-    off.width = Math.ceil(H.width / s); off.height = Math.ceil(H.height / s);
-    const octx = off.getContext('2d', { willReadFrequently: true });
     const field = getComputedStyle(host).getPropertyValue('--tl-skeleton').trim() || '#c3c7d6';
     const ramp = P.ramp, R = ramp.length - 1;
     const t0 = performance.now();
     let lastDraw = 0;
     const L = { stopAt: Infinity };
     load = L;
+
+    // mascot: a small square box centred on the content (default ≤ 132px), drawn through a fine glyph grid
+    let mascot = null;
+    if (o.mascot) {
+      const size = Math.min(o.size || 132, H.width * 0.7, H.height * 0.7);
+      const cell = o.cell || Math.max(4, Math.round(size / 26)), cw = cell * 0.62;
+      const cols = Math.floor(size / cw), rows = Math.floor(size / cell);
+      const mx = (H.width - cols * cw) / 2, my = (H.height - rows * cell) / 2 + (o.offsetY || 0);
+      const s = cw / 2;
+      const off = document.createElement('canvas');
+      off.width = Math.ceil((cols * cw) / s); off.height = Math.ceil((rows * cell) / s);
+      mascot = { cell, cw, cols, rows, mx, my, s, off, octx: off.getContext('2d', { willReadFrequently: true }) };
+    }
+
     schedule((now) => {
       const t = now - t0;
       const fin = clamp(t / 320), fout = L.stopAt === Infinity ? 1 : 1 - clamp((now - L.stopAt) / 380);
@@ -405,35 +435,52 @@ export function glyph(scope, options = {}) {
       if (now - lastDraw < 33) return true;
       lastDraw = now;
       ctx.clearRect(0, 0, H.width, H.height);
-      ctx.font = `500 ${cell}px ${opts.font}`;
-      ctx.textBaseline = 'top';
       const tick = Math.floor(t / 85);
-      let data = null;
-      if (o.mascot) {
-        octx.clearRect(0, 0, off.width, off.height);
-        octx.save(); o.mascot(octx, off.width, off.height, t / 1000); octx.restore();
-        data = octx.getImageData(0, 0, off.width, off.height).data;
-      }
-      let lastFill = '';
-      for (let gy = 0; gy < rows; gy++) for (let gx = 0; gx < cols; gx++) {
-        if (noise(gx, gy, 5) > fin || noise(gx, gy, 9) > fout) continue;
-        let lvl, fill;
-        if (data) {
-          const px = Math.min(off.width - 1, Math.floor((ox + (gx + 0.5) * cw) / s));
-          const py = Math.min(off.height - 1, Math.floor((oy + (gy + 0.5) * cell) / s));
-          const k = (py * off.width + px) * 4, a = data[k + 3] / 255;
+
+      if (mascot) {
+        const M = mascot;
+        M.octx.clearRect(0, 0, M.off.width, M.off.height);
+        M.octx.save(); o.mascot(M.octx, M.off.width, M.off.height, t / 1000); M.octx.restore();
+        const data = M.octx.getImageData(0, 0, M.off.width, M.off.height).data;
+        ctx.font = `500 ${M.cell}px ${opts.font}`;
+        ctx.textBaseline = 'top';
+        let lastFill = '';
+        for (let gy = 0; gy < M.rows; gy++) for (let gx = 0; gx < M.cols; gx++) {
+          if (noise(gx, gy, 5) > fin || noise(gx, gy, 9) > fout) continue;
+          const px = Math.min(M.off.width - 1, Math.floor(((gx + 0.5) * M.cw) / M.s));
+          const py = Math.min(M.off.height - 1, Math.floor(((gy + 0.5) * M.cell) / M.s));
+          const k = (py * M.off.width + px) * 4, a = data[k + 3] / 255;
           if (a < 0.2) continue;
-          lvl = a; fill = `rgb(${data[k] & 0xf8},${data[k + 1] & 0xf8},${data[k + 2] & 0xf8})`;
-        } else {
-          lvl = 0.5 + 0.5 * Math.sin(gx * 0.45 - t * 0.006 + gy * 1.3);
-          if (lvl < 0.55) continue;
-          fill = field;
+          let lvl = a;
+          if (noise(gx, gy, tick) < 0.1) lvl = clamp(lvl + (noise(gy, gx, tick) - 0.5) * 0.5);
+          const fill = `rgb(${data[k] & 0xf8},${data[k + 1] & 0xf8},${data[k + 2] & 0xf8})`;
+          if (fill !== lastFill) { ctx.fillStyle = lastFill = fill; }
+          ctx.fillText(ramp[Math.max(1, Math.min(R, Math.round(lvl * R)))], M.mx + gx * M.cw, M.my + gy * M.cell);
         }
-        if (noise(gx, gy, tick) < 0.1) lvl = clamp(lvl + (noise(gy, gx, tick) - 0.5) * 0.5);
-        const ch = ramp[Math.max(1, Math.min(R, Math.round(lvl * R)))];
-        if (fill !== lastFill) { ctx.fillStyle = lastFill = fill; }
-        ctx.fillText(ch, ox + gx * cw, oy + gy * cell);
+        return true;
       }
+
+      // content-shaped field: glyph bars where text will land, glyph blocks where media will land
+      ctx.fillStyle = field;
+      ctx.textBaseline = 'top';
+      for (const [ri, r] of rects.entries()) {
+        const cell = r.kind === 'text' ? Math.max(6, Math.min(11, r.h)) : 8, cw = cell * 0.62;
+        const cols = Math.max(1, Math.floor(r.w / cw)), rows = Math.max(1, Math.floor(r.h / cell));
+        const oy = r.y + (r.h - rows * cell) / 2;
+        ctx.font = `500 ${cell}px ${opts.font}`;
+        for (let gy = 0; gy < rows; gy++) for (let gx = 0; gx < cols; gx++) {
+          if (noise(gx + ri * 131, gy, 5) > fin || noise(gx, gy + ri * 71, 9) > fout) continue;
+          const x = r.x + gx * cw;
+          // a soft band sweeps left → right; outside the band the pattern stays faint
+          const band = 0.5 + 0.5 * Math.sin((x / Math.max(1, H.width)) * 6.2 - t * 0.0042 + ri * 0.35);
+          let lvl = r.kind === 'media' ? 0.18 + 0.5 * band * (0.6 + 0.4 * noise(gx, gy, ri)) : 0.25 + 0.6 * band;
+          if (noise(gx + ri, gy, tick) < 0.08) lvl = clamp(lvl + (noise(gy, gx + ri, tick) - 0.5) * 0.6);
+          if (r.kind === 'media' && noise(gx, gy, ri + 3) < 0.35) continue;    // airy texture inside images
+          ctx.globalAlpha = 0.35 + 0.65 * lvl;
+          ctx.fillText(ramp[Math.max(1, Math.min(R, Math.round(lvl * R)))], x, oy + gy * cell);
+        }
+      }
+      ctx.globalAlpha = 1;
       return true;
     });
   }

@@ -105,9 +105,10 @@ button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
 .hero .hc-main{height:500px}
 .hero .cap b{color:var(--ink-2);font-weight:500}
 .cover{height:150px;margin:-18px -18px 0;flex:none;position:relative;background:var(--soft)}
-.cover canvas{width:100%;height:100%;display:block}
+.cover canvas,.cover img{width:100%;height:100%;display:block;object-fit:cover}
 .avatar{width:76px;height:76px;border-radius:50%;margin:-56px 0 0 4px;border:4px solid #fff;flex:none;position:relative;z-index:1;
-  display:grid;place-items:center;font-weight:600;font-size:24px;color:#fff;background:linear-gradient(135deg,#ff9cbc,#a99bff 55%,#6fb5ff)}
+  display:grid;place-items:center;font-weight:600;font-size:24px;color:#fff;background:linear-gradient(135deg,#ff9cbc,#a99bff 55%,#6fb5ff);overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
 .p-name{display:flex;align-items:center;gap:8px;font-weight:600;font-size:22px;letter-spacing:-.01em}
 .p-name .chip{font-size:11px;padding:3px 9px}
 .p-role{font-size:14px;color:var(--ink-2);margin-top:2px}
@@ -157,7 +158,23 @@ section.set{position:relative;isolation:isolate;padding:clamp(64px,9vw,112px) 0 
 .c-head .chip{margin-left:auto;font-size:11.5px;padding:4px 10px}
 .chip.live{background:#e8f7ef;color:var(--ok)} .chip.hot{background:#ffe7ec;color:#d63a5a}
 .media{flex:1;border-radius:14px;overflow:hidden;min-height:0;background:var(--soft)}
-.media canvas{width:100%;height:100%;display:block}
+.media canvas,.media img{width:100%;height:100%;display:block;object-fit:cover}
+/* simple one-colour cards (Holiday set) */
+.card.simple{height:330px}
+.card.simple .slot{bottom:68px;justify-content:space-between}
+.sm-label{font-size:14px;color:var(--ink-2)}
+.sm-val{font-weight:600;font-size:46px;letter-spacing:-.03em;line-height:1.05;margin-top:2px}
+.sm-sub{font-size:13px;color:var(--muted);margin-top:4px}
+.card-load{position:absolute;left:18px;right:18px;bottom:18px;width:auto}
+.card .btn.card-load{height:36px}
+/* usage card */
+.meter{height:10px;border-radius:99px;background:var(--soft);overflow:hidden}
+.meter i{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,#ff9cbc,#a99bff 55%,#6fb5ff)}
+.meter.sm{height:6px}
+.usage{display:flex;flex-direction:column;gap:14px}
+.u-row{display:grid;grid-template-columns:1fr auto;gap:6px 10px;font-size:13.5px;color:var(--ink-2)}
+.u-row b{color:var(--ink);font-weight:600}
+.u-row .meter{grid-column:1/-1}
 .t1{font-weight:600;font-size:21px;line-height:1.15;letter-spacing:-.01em}
 .t2{font-size:14px;color:var(--ink-2);margin-top:3px}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -429,6 +446,8 @@ const lin = (ctx, x0, y0, x1, y1, stops) => { const g = ctx.createLinearGradient
 const rad = (ctx, x, y, r, stops) => { const g = ctx.createRadialGradient(x, y, 0, x, y, r); stops.forEach(([o, c]) => g.addColorStop(o, c)); return g; };
 const rr = (ctx, x, y, w, h, r) => { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); };
 const P_VN = 'ink', P_XMAS = 'spark', P_GRAD = 'dither';
+const rnd = (n) => Math.floor(Math.random() * n);
+const fmt = (n) => n.toLocaleString('en-US');
 
 const ART = {
   bottle(ctx, W, H) {
@@ -581,8 +600,8 @@ const SETS = {
     preset: P_VN, mode: 'mascot',
     cards: [
       { cap: '&lt;ProductCard mascot={phin}/&gt;', mascot: 'phin', html: `${head('phin', 'Phin &amp; Co.', 'Saigon, Vietnam', 'New')}
-        <div class="media"><canvas data-art="bottle"></canvas></div>
-        <div><div class="t1">Saigon Cold Brew</div><div class="t2">18-hour slow drip · 250 ml · Single-origin Arabica</div></div>
+        <div class="media"><img src="assets/img/coffee.jpg" alt="Iced Saigon cold brew"></div>
+        <div><div class="t1">Saigon Cold Brew</div><div class="t2">18-hour slow drip · Over ice · Arabica</div></div>
         <div class="foot"><span class="price">$4.50</span><button class="btn" data-cta="Added to bag ✓">Add to bag</button></div>` },
       { cap: '&lt;OrderCard mascot={hat}/&gt;', mascot: 'hat', html: `${head('banhmi', 'Banh Mi Club', 'Order #VN-2047', 'On the way', 'live')}
         <div class="rows">${row('banhmi', 'Classic Banh Mi', 'Pork, pâté, herbs · ×2', '$9.00')}${row('coffee', 'Iced Milk Coffee', 'Less sugar · ×1', '$3.50')}${row('rolls', 'Fresh Spring Rolls', 'Peanut dip · ×1', '$5.00')}</div>
@@ -591,7 +610,7 @@ const SETS = {
         <div class="courier"><span class="av" style="background:linear-gradient(135deg,#ffb38a,#ff7a9c)"></span><div>Minh is on the way<small>★ 4.9 · Honda Wave</small></div></div>
         <div class="foot" style="margin-top:auto"><span class="price">$17.50</span><button class="btn ghost">Track order</button></div>` },
       { cap: '&lt;ExperienceCard mascot={lantern}/&gt;', mascot: 'lantern', html: `${head('lantern', 'Lantern Trails', 'Hoi An Old Town', '★ 4.9')}
-        <div class="media"><canvas data-art="lanterns"></canvas></div>
+        <div class="media"><img src="assets/img/hoian.jpg" alt="Hoi An old town at night"></div>
         <div><div class="t1">Hoi An Lantern Night</div><div class="t2">3 hours · Boat ride · Local guide included</div></div>
         <div class="foot"><span class="price">$38 <small>/ person</small></span><button class="btn dark">Book</button></div>` },
     ],
@@ -599,25 +618,13 @@ const SETS = {
   },
   xmas: {
     title: ['Holiday-ready loading.', 'Christmas set — snowman, tree, gift.'],
-    preset: P_XMAS, mode: 'mascot',
+    preset: P_XMAS, mode: 'mascot', simple: true,
     cards: [
-      { cap: '&lt;ProductCard mascot={tree}/&gt;', mascot: 'tree', html: `${head('frost', 'Frost &amp; Fir', 'Holiday Collection', 'Gift pick', 'hot')}
-        <div class="media"><canvas data-art="candles"></canvas></div>
-        <div><div class="t1">Nordic Candle Trio</div><div class="t2">Pine, cedar &amp; cinnamon · Gift-wrapped</div></div>
-        <div class="foot"><span class="price">$29</span><button class="btn">Add to bag</button></div>` },
-      { cap: '&lt;OrderCard mascot={gift}/&gt;', mascot: 'gift', html: `${head('post', 'North Post', 'Order #XM-1224', 'Out for delivery', 'live')}
-        <div class="rows">${row('candle', 'Nordic Candle Trio', 'Gift-wrapped · ×1', '$29.00')}${row('socks', 'Wool Socks', 'Red · Size M · ×2', '$24.00')}${row('bauble', 'Glass Ornament Set', 'Forest green · ×1', '$11.00')}</div>
-        <div class="sep"></div><div class="track"><i class="on"></i><i class="on"></i><i class="on"></i><i></i></div>
-        <div class="meta"><span>Arrives Dec 23</span><span>Before 6 PM</span></div>
-        <div class="courier"><span class="av" style="background:linear-gradient(135deg,#ff9cbc,#e5484d)"></span><div>Your gift is on its way<small>Leave at door · Ring twice</small></div></div>
-        <div class="foot" style="margin-top:auto"><span class="price">$64.00</span><button class="btn ghost">Track order</button></div>` },
-      { cap: '&lt;PromoCard mascot={snowman}/&gt;', mascot: 'snowman', html: `${head('sale', 'Frost &amp; Fir', 'Holiday Sale', 'Ends soon', 'hot')}
-        <div class="media" style="flex:.9"><canvas data-art="ornaments"></canvas></div>
-        <div><div class="t1">30% off everything</div><div class="t2">Free gift wrap on all orders over $40.</div></div>
-        <div class="count"><div><b>02</b><small>days</small></div><div><b>14</b><small>hours</small></div><div><b data-tick>08</b><small>minutes</small></div></div>
-        <button class="btn dark" data-cta="Code FROST30 copied ✓">Claim offer</button>` },
+      { cap: 'mascot={tree}', mascot: 'tree', tag: 'Tree farm', label: 'Trees decorated', val: () => fmt(900 + rnd(2400)), sub: () => `${10 + rnd(60)} new since midnight` },
+      { cap: 'mascot={gift}', mascot: 'gift', tag: "Santa's workshop", label: 'Gifts wrapped', val: () => fmt(1200 + rnd(3800)), sub: () => `${20 + rnd(80)} in the last hour` },
+      { cap: 'mascot={snowman}', mascot: 'snowman', tag: 'Snow report', label: 'Snowfall today', val: () => `${(4 + Math.random() * 30).toFixed(1)} cm`, sub: () => `Feels like −${2 + rnd(9)}°C` },
     ],
-    click: 2,
+    click: -1,
   },
   grad: {
     title: ['Gradients that breathe.', 'Motion set — no gray boxes, ever.'],
@@ -646,8 +653,8 @@ const SET_ORDER = [['vn', '01 — Vietnam set'], ['xmas', '02 — Holiday set'],
 const SET_COPY = {
   vn:   { desc: 'ASCII mascots drawn from Vietnamese everyday life — a dripping coffee filter, a conical hat over rice fields, a swinging lantern — while each card loads.',
           code: `import { glyph, mascots } from 'tomload';\n\nconst g = glyph(card, { preset: 'ink' });\ng.hide({ instant: true });\ng.loading(true, { mascot: mascots.phin });   // hat · lantern\n\nawait fetchData();\ng.loading(false);\nawait g.reveal({ origin: 'top', speed: 0.6 });` },
-  xmas: { desc: 'A snowman in falling snow, a tree with twinkling lights and a hopping gift box — seasonal loading without shipping a single image.',
-          code: `const g = glyph(card, { preset: 'spark' });\ng.hide({ instant: true });\ng.loading(true, { mascot: mascots.snowman });   // tree · gift\n\nawait fetchData();\ng.loading(false);\nawait g.reveal();` },
+  xmas: { desc: 'Plain one-colour cards. Each has its own Load — a small snowman, tree or gift plays in the exact spot where the number is about to land.',
+          code: `loadBtn.onclick = async () => {\n  const g = glyph(card.querySelector('.data'), { preset: 'spark' });\n  await g.hide();\n  g.loading(true, { mascot: mascots.snowman, size: 96 });   // tree · gift\n  render(await fetchStats());\n  g.loading(false);\n  await g.reveal();\n};` },
   grad: { desc: 'A breathing pastel gradient with glyph rows on top. When data lands the gradient melts away and images decode through shaded blocks.',
           code: `card.classList.add('breathing');                     // your CSS gradient\ngrad.innerHTML = skeleton({ variant: 'braille', lines: 4 });\nconst g = glyph(slot, { preset: 'dither' });\ng.hide({ instant: true });\n\nawait fetchData();\ncard.classList.remove('breathing');\nawait g.reveal();` },
 };
@@ -670,14 +677,40 @@ function highlight(pre) {
   pre.innerHTML = out + esc(src.slice(last));
 }
 
+function simpleHTML(c) {
+  return `<div><span class="eyebrow">${c.tag}</span></div>
+    <div><div class="sm-label">${c.label}</div><div class="sm-val">${c.val()}</div><div class="sm-sub">${c.sub()}</div></div>`;
+}
 function cardHTML(S, c, i) {
+  if (S.simple) return `<div class="cardbox"><article class="card simple" data-i="${i}"><div class="slot">${simpleHTML(c)}</div><button class="btn ghost card-load">Load</button></article><div class="cap">${c.cap}</div></div>`;
   return `<div class="cardbox"><article class="card" data-i="${i}">
     ${S.mode === 'gradient' ? `<div class="grad">${skeleton({ variant: 'braille', lines: 4, seed: i + 4 }).replace('class="tls', 'style="top:24px" class="tls')}${skeleton({ variant: 'dots', lines: 4, seed: i + 9 }).replace('class="tls', 'style="bottom:24px" class="tls')}</div>` : ''}
     <div class="slot">${c.html}</div></article><div class="cap">${c.cap}</div></div>`;
 }
 
+/** One simple card: its own Load button → small mascot where the number sits → fresh data decodes in. */
+async function loadOne(S, card) {
+  const btn = $('.card-load', card), c = S.cards[+card.dataset.i], slot = $('.slot', card);
+  if (btn.disabled) return;
+  btn.disabled = true; btn.textContent = 'Loading…';
+  const g = glyph(slot, { preset: S.preset });
+  await g.hide({ speed: 1.8 });
+  g.loading(true, { mascot: mascots[c.mascot], size: 96 });
+  await sleep(1800 + Math.random() * 600);
+  slot.innerHTML = simpleHTML(c);                    // new data arrives
+  g.loading(false);
+  await g.reveal({ origin: 'top', speed: .7 });
+  g.destroy();
+  btn.disabled = false; btn.textContent = 'Load';
+}
+
 /** Full load cycle for a list of cards: scramble out → loading state → decode in. */
 async function loadCycle(S, cards, setStatus) {
+  if (S.simple) {
+    setStatus('loading…');
+    await Promise.all(cards.map((card, i) => sleep(i * 250).then(() => loadOne(S, card))));
+    return;
+  }
   const ctls = cards.map((card) => glyph($('.slot', card), { preset: S.preset }));
   setStatus('scrambling…');
   await Promise.all(ctls.map((g) => g.hide({ speed: 1.8 })));
@@ -735,6 +768,7 @@ function bindSets() {
       btn.innerHTML = '<span class="ico"></span>Load again';
     });
     $('[data-code]', sec).addEventListener('click', () => $('.set-code', sec).classList.toggle('open'));
+    if (S.simple) $$('.card-load', sec).forEach((b) => b.addEventListener('click', () => loadOne(S, b.closest('.card'))));
   });
   // first view: decode each set once as it scrolls in
   const io = new IntersectionObserver((es) => es.forEach((e) => {
@@ -752,17 +786,27 @@ function bindHero() {
       <div class="kpi-row"><div><b>1,284</b><small>Orders</small></div><div><b>3.8%</b><small>Conversion</small></div></div></div>`;
   const profile = `<div class="grad">${skeleton({ variant: 'braille', lines: 3, seed: 21 }).replace('class="tls', 'style="top:180px" class="tls')}${skeleton({ variant: 'dots', lines: 4, seed: 22 }).replace('class="tls', 'style="bottom:24px" class="tls')}</div>
     <div class="slot">
-      <div class="cover"><canvas data-art="cover"></canvas></div>
-      <div class="avatar">LP</div>
-      <div><div class="p-name">Lan Pham <span class="chip live">Pro</span></div><div class="p-role">Senior Product Designer · Ho Chi Minh City</div></div>
-      <div class="p-tags"><span>UX Strategy</span><span>Design Systems</span><span>Motion</span></div>
-      <div class="count"><div><b>48</b><small>Projects</small></div><div><b>12.4k</b><small>Followers</small></div><div><b>3.1k</b><small>Likes</small></div></div>
+      <div class="cover"><img src="assets/img/cover.jpg" alt=""></div>
+      <div class="avatar"><img src="assets/img/avatar.jpg" alt="Johnny Bui"></div>
+      <div><div class="p-name">Johnny Bui <span class="chip live">Pro</span></div><div class="p-role">Product Designer · Founder of Tomdesign</div></div>
+      <div class="p-tags"><span>UX Strategy</span><span>Design Systems</span><span>Frontend</span></div>
+      <div class="count"><div><b>80+</b><small>Projects</small></div><div><b>10+</b><small>Years</small></div><div><b>HCMC</b><small>Based in</small></div></div>
       <div class="duo" style="margin-top:auto"><button class="btn dark">Follow</button><button class="btn ghost">Message</button></div></div>`;
-  const product = `<div class="slot">${SETS.grad.cards[1].html}</div>`;
+  const usage = `<div class="slot">
+      <div><div class="t2" style="margin:0;display:flex;justify-content:space-between;align-items:center">Monthly usage <span class="chip">Pro plan</span></div>
+        <div class="amount" style="font-size:40px;margin-top:4px">1.28M</div><div class="t2">of 2M API requests</div></div>
+      <div class="meter" data-tl="fade"><i style="width:64%"></i></div>
+      <div class="usage">
+        <div class="u-row"><span>Bandwidth</span><b>412 GB</b><div class="meter sm" data-tl="fade"><i style="width:41%"></i></div></div>
+        <div class="u-row"><span>Storage</span><b>68 GB</b><div class="meter sm" data-tl="fade"><i style="width:68%"></i></div></div>
+        <div class="u-row"><span>Seats</span><b>9 / 12</b><div class="meter sm" data-tl="fade"><i style="width:75%"></i></div></div>
+        <div class="u-row"><span>Rate limit</span><b>180 RPM</b><div class="meter sm" data-tl="fade"><i style="width:52%"></i></div></div>
+      </div>
+      <div class="foot" style="margin-top:auto"><span class="t2" style="margin:0">Resets in 6 days</span><button class="btn dark">Upgrade</button></div></div>`;
   const cards = [
-    { html: chart, cls: 'hc-side', cap: '<b>&lt;ChartCard/&gt;</b> · loading(true) · binary', preset: 'binary', mode: 'field' },
+    { html: chart, cls: 'hc-side', cap: '<b>&lt;ChartCard/&gt;</b> · content-shaped field', preset: 'binary', mode: 'field' },
     { html: profile, cls: 'hc-main', cap: '<b>&lt;ProfileCard/&gt;</b> · gradient skeleton', preset: 'dither', mode: 'gradient' },
-    { html: product, cls: 'hc-side', cap: '<b>&lt;ProductCard/&gt;</b> · mascot={gift}', preset: 'spark', mode: 'mascot', mascot: 'gift' },
+    { html: usage, cls: 'hc-side', cap: '<b>&lt;UsageCard/&gt;</b> · mascot={phin}', preset: 'ink', mode: 'mascot', mascot: 'phin' },
   ];
   $('#heroCards').innerHTML = cards.map((c, i) => `<div class="cardbox"><article class="card ${c.cls}" data-i="${i}">${c.html}</article><div class="cap">${c.cap}</div></div>`).join('');
   paint($('#heroCards'));
@@ -839,7 +883,7 @@ const BTN_STATES = {
 function bindCardButtons() {
   document.addEventListener('click', async (e) => {
     const btn = e.target.closest('.card .btn');
-    if (!btn || btn.dataset.busy || btn.closest('.tl-hide')) return;
+    if (!btn || btn.classList.contains('card-load') || btn.dataset.busy || btn.closest('.tl-hide')) return;
     const orig = btn.dataset.orig || (btn.dataset.orig = btn.textContent.trim());
     const next = btn.classList.contains('done') ? orig : (BTN_STATES[orig] || `${orig} ✓`);
     btn.dataset.busy = '1';
