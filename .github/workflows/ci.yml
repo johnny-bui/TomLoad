@@ -19,3 +19,5 @@ jobs:
       - run: npm run build
       - run: npm pack --dry-run
       - run: cmp dist/tomload.iife.js docs/tomload.iife.js
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
