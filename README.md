@@ -45,13 +45,13 @@ await g.reveal({ origin: 'top' });
 ## Install
 
 ```bash
-npm i github:johnny-bui/TomLoad#v0.1.0
+npm i github:johnny-bui/TomLoad#v0.1.1
 ```
 
 No build step? Drop the browser build into any page — it exposes a global `TomLoad`:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/johnny-bui/TomLoad@v0.1.0/dist/tomload.iife.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/johnny-bui/TomLoad@v0.1.1/dist/tomload.iife.js"></script>
 <script>
   const { glyph, skeleton, mascots } = TomLoad;
 </script>
@@ -208,6 +208,7 @@ g.loading(true, { mascot: pulse, size: 96 });
 
 ```bash
 npm install
+npm test          # run unit tests
 npm run build     # builds dist/ and copies the browser build into docs/
 npm run dev       # serves docs/ locally
 ```

@@ -209,18 +209,39 @@ export function glyph(scope, options = {}) {
   injectCSS();
   const opts = { ...DEFAULTS, ...options };
   const host = scope;
+  const hadHostClass = host.classList.contains('tl-host');
   if (getComputedStyle(host).position === 'static') host.classList.add('tl-host');
   let token = 0;           // cancels runs that were superseded
   let load = null;         // active loading layer
   let state = 'shown';
+  let destroyed = false;
+  const savedStyles = new Map();
+  const ownedLayers = new Set();
+  const restoreStyles = () => {
+    for (const [el, values] of savedStyles) {
+      for (const [prop, original] of Object.entries(values)) el.style[prop] = original;
+    }
+    savedStyles.clear();
+  };
+  const remember = (el, prop) => {
+    if (!savedStyles.has(el)) savedStyles.set(el, {});
+    const values = savedStyles.get(el);
+    if (!(prop in values)) values[prop] = el.style[prop];
+  };
+  const originalBusy = host.getAttribute('aria-busy');
+  const originalHostClass = hadHostClass;
+  const originalHideClass = scope.classList.contains('tl-hide');
 
   const preset = () => (typeof opts.preset === 'string' ? PRESETS[opts.preset] || PRESETS.ink : opts.preset);
   const accentOf = () => opts.accent || getComputedStyle(host).getPropertyValue('--tl-accent').trim() || null;
 
   function setHidden(m, on) {
     scope.classList.toggle('tl-hide', on);
-    for (const md of m.media) md.el.style.opacity = on ? '0' : '';
-    for (const f of m.fades) { f.el.style.transition = ''; f.el.style.opacity = on ? '0' : ''; }
+    for (const md of m.media) { remember(md.el, 'opacity'); md.el.style.opacity = on ? '0' : ''; }
+    for (const f of m.fades) {
+      remember(f.el, 'transition'); remember(f.el, 'opacity');
+      f.el.style.transition = ''; f.el.style.opacity = on ? '0' : '';
+    }
   }
 
   function originOf(o, H) {
@@ -232,6 +253,7 @@ export function glyph(scope, options = {}) {
 
   /** One run: dir = 1 decodes in, -1 scrambles out. */
   function run(dir, o = {}) {
+    if (destroyed) return Promise.resolve();
     const id = ++token;
     const P = preset();
     const m = measure(scope, host, opts);
@@ -283,10 +305,15 @@ export function glyph(scope, options = {}) {
     for (const f of m.fades) { f.t0 = Math.hypot(f.x - org.x, f.y - org.y) / vel; end = Math.max(end, f.t0 + 300); }
 
     if (dir < 0) { setHidden(m, true); }
-    else { scope.classList.add('tl-hide'); for (const md of m.media) md.el.style.opacity = '0'; for (const f of m.fades) f.el.style.opacity = '0'; }
+    else {
+      scope.classList.add('tl-hide');
+      for (const md of m.media) { remember(md.el, 'opacity'); md.el.style.opacity = '0'; }
+      for (const f of m.fades) { remember(f.el, 'opacity'); f.el.style.opacity = '0'; }
+    }
     state = dir > 0 ? 'revealing' : 'hiding';
 
     const { c: layer, ctx } = makeLayer(host, H);
+    ownedLayers.add(layer);
     const ramp = P.ramp, R = ramp.length - 1, G = P.glyphs;
     const start = performance.now();
     // group chars by font so ctx.font changes rarely
@@ -297,8 +324,8 @@ export function glyph(scope, options = {}) {
 
     return new Promise((resolve) => {
       const finish = () => {
-        layer.remove();
-        if (id !== token) return resolve();
+        layer.remove(); ownedLayers.delete(layer);
+        if (id !== token || destroyed) return resolve();
         if (dir > 0) { setHidden(m, false); for (const f of m.fades) f.el.style.transition = ''; state = 'shown'; }
         else state = 'hidden';
         resolve();
@@ -312,7 +339,10 @@ export function glyph(scope, options = {}) {
         for (const f of m.fades) {
           const on = dir > 0 ? t >= f.t0 : t < f.t0;
           const want = on ? '1' : '0';
-          if (f.el.style.opacity !== want) { f.el.style.transition = 'opacity .32s ease'; f.el.style.opacity = want; }
+          if (f.el.style.opacity !== want) {
+            remember(f.el, 'transition'); remember(f.el, 'opacity');
+            f.el.style.transition = 'opacity .32s ease'; f.el.style.opacity = want;
+          }
         }
 
         // media: glyph phase, then image tiles
@@ -396,6 +426,7 @@ export function glyph(scope, options = {}) {
   }
 
   function loading(on, o = {}) {
+    if (destroyed) return;
     if (!on) {
       if (load) load.stopAt = performance.now();
       host.removeAttribute('aria-busy');
@@ -431,7 +462,7 @@ export function glyph(scope, options = {}) {
     schedule((now) => {
       const t = now - t0;
       const fin = clamp(t / 320), fout = L.stopAt === Infinity ? 1 : 1 - clamp((now - L.stopAt) / 380);
-      if (fout <= 0) { layer.remove(); if (load === L) load = null; return false; }
+      if (fout <= 0) { layer.remove(); ownedLayers.delete(layer); if (load === L) load = null; return false; }
       if (now - lastDraw < 33) return true;
       lastDraw = now;
       ctx.clearRect(0, 0, H.width, H.height);
@@ -492,10 +523,18 @@ export function glyph(scope, options = {}) {
     get state() { return state; },
     update(next) { Object.assign(opts, next); },
     destroy() {
+      if (destroyed) return;
+      destroyed = true;
       token++;
-      if (load) load.stopAt = 0;
-      scope.classList.remove('tl-hide');
-      host.querySelectorAll(':scope > .tl-layer').forEach((c) => c.remove());
+      if (load) { load.stopAt = 0; load = null; }
+      for (const layer of ownedLayers) layer.remove();
+      ownedLayers.clear();
+      restoreStyles();
+      scope.classList.toggle('tl-hide', originalHideClass);
+      host.classList.toggle('tl-host', originalHostClass);
+      if (originalBusy === null) host.removeAttribute('aria-busy');
+      else host.setAttribute('aria-busy', originalBusy);
+      state = 'shown';
     },
   };
 }
@@ -513,15 +552,23 @@ export const SKELETONS = {
 
 export function skeleton({ lines = 3, variant = 'dots', widths, rows, seed = 1, chars = 64 } = {}) {
   injectCSS();
-  const set = SKELETONS[variant] || variant;
+  const safeVariant = typeof variant === 'string' && /^[a-zA-Z0-9_-]{1,40}$/.test(variant) ? variant : 'dots';
+  const set = SKELETONS[variant] || (typeof variant === 'string' && variant.length && variant.length <= 128 ? variant : SKELETONS.dots);
+  const safeWidth = (value) => {
+    const candidate = String(value);
+    return /^(?:0|(?:\d+(?:\.\d+)?)(?:px|%|em|rem|vw|ch))$/.test(candidate) ? candidate : '100%';
+  };
+  const count = (value, fallback) => Number.isFinite(value) ? Math.max(0, Math.min(100, Math.floor(value))) : fallback;
+  lines = count(lines, 3); rows = count(rows, 0); chars = count(chars, 64);
   const r = rng(seed);
-  const row = (n) => Array.from({ length: n }, () => set[Math.floor(r() * set.length)]).join('');
+  const escapeText = (value) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const row = (n) => Array.from({ length: n }, () => escapeText(set[Math.floor(r() * set.length)])).join('');
   if (rows) {
-    return `<span class="tls tls-${variant}" aria-hidden="true">${Array.from({ length: rows }, () => `<span class="tls-row">${row(chars)}</span>`).join('')}</span>`;
+    return `<span class="tls tls-${safeVariant}" aria-hidden="true">${Array.from({ length: rows }, () => `<span class="tls-row">${row(chars)}</span>`).join('')}</span>`;
   }
   const w = widths || ['100%', '92%', '76%', '84%', '58%'];
-  return `<span class="tls tls-${variant}" aria-hidden="true">${Array.from({ length: lines }, (_, i) =>
-    `<span class="tls-line" style="width:${w[i % w.length]}">${row(chars)}</span>`).join('')}</span>`;
+  return `<span class="tls tls-${safeVariant}" aria-hidden="true">${Array.from({ length: lines }, (_, i) =>
+    `<span class="tls-line" style="width:${safeWidth(w[i % w.length])}">${row(chars)}</span>`).join('')}</span>`;
 }
 
 export default glyph;

@@ -26,7 +26,9 @@
   ],
   "scripts": {
     "build": "esbuild src/index.js --bundle --format=esm --minify --outfile=dist/tomload.js && esbuild src/index.js --bundle --format=iife --global-name=TomLoad --minify --outfile=dist/tomload.iife.js && cp dist/tomload.iife.js docs/tomload.iife.js",
-    "dev": "npx serve docs"
+    "dev": "npx serve docs",
+    "test": "node --test tests/skeleton.test.js",
+    "test:browser": "node --test tests/browser.test.js"
   },
   "repository": {
     "type": "git",
@@ -53,6 +55,7 @@
   "author": "Johnny Bui — Tomdesign (https://tomdesign.vn)",
   "license": "MIT",
   "devDependencies": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "playwright": "^1.56.0"
   }
 }
