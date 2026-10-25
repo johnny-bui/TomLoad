@@ -15,6 +15,14 @@
 <meta name="description" content="Skeletons made of glyphs, animated ASCII mascots and a decode-in reveal for any DOM element. Zero dependencies, ~7 KB. By Tomdesign.">
 <meta property="og:title" content="TomLoad — loading states, decoded">
 <meta property="og:description" content="Glyph skeletons, ASCII mascots and a decode-in reveal. Zero dependencies. By Tomdesign.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://johnny-bui.github.io/TomLoad/">
+<meta property="og:image" content="https://johnny-bui.github.io/TomLoad/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://johnny-bui.github.io/TomLoad/assets/og.png">
+<meta name="author" content="Johnny Bui — Tomdesign">
 <link rel="icon" href="assets/favicon.ico" sizes="any">
 <link rel="icon" href="assets/favicon-32.png" type="image/png" sizes="32x32">
 <link rel="icon" href="assets/favicon-192.png" type="image/png" sizes="192x192">
@@ -379,10 +387,10 @@ el.innerHTML = skeleton({ variant: 'blocks', rows: 8 });     // image / avatar b
     <div class="set-head"><div><div class="eyebrow">06 — Install</div><h2>Four steps. <span>Works with any stack.</span></h2></div></div>
     <div class="steps">
       <div class="step"><h3><i>1</i>Install</h3><p>From GitHub with npm, or drop the browser build into any page — WordPress, Webflow, plain HTML.</p>
-        <div class="code"><button class="copy">COPY</button><pre data-lang="sh">npm i github:johnny-bui/TomLoad
+        <div class="code"><button class="copy">COPY</button><pre data-lang="sh">npm i github:johnny-bui/TomLoad#v0.1.0
 
 # or, no build step
-&lt;script src="https://cdn.jsdelivr.net/gh/johnny-bui/TomLoad@main/dist/tomload.iife.js"&gt;&lt;/script&gt;</pre></div></div>
+&lt;script src="https://cdn.jsdelivr.net/gh/johnny-bui/TomLoad@v0.1.0/dist/tomload.iife.js"&gt;&lt;/script&gt;</pre></div></div>
       <div class="step"><h3><i>2</i>Paint a skeleton</h3><p>Static markup, shows instantly while your request is in flight.</p>
         <div class="code"><button class="copy">COPY</button><pre data-lang="js">import { glyph, skeleton, mascots } from 'tomload';
 

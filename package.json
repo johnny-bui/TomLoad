@@ -5,16 +5,54 @@
   "type": "module",
   "main": "dist/tomload.js",
   "module": "dist/tomload.js",
-  "exports": { ".": "./dist/tomload.js", "./src/*": "./src/*" },
-  "files": ["dist", "src", "README.md", "LICENSE"],
+  "types": "dist/tomload.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/tomload.d.ts",
+      "import": "./dist/tomload.js",
+      "default": "./dist/tomload.js"
+    },
+    "./iife": "./dist/tomload.iife.js",
+    "./src/*": "./src/*"
+  },
+  "unpkg": "dist/tomload.iife.js",
+  "jsdelivr": "dist/tomload.iife.js",
+  "sideEffects": false,
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "esbuild src/index.js --bundle --format=esm --minify --outfile=dist/tomload.js && esbuild src/index.js --bundle --format=iife --global-name=TomLoad --minify --outfile=dist/tomload.iife.js && cp dist/tomload.iife.js docs/tomload.iife.js",
     "dev": "npx serve docs"
   },
-  "repository": { "type": "git", "url": "https://github.com/johnny-bui/TomLoad.git" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnny-bui/TomLoad.git"
+  },
   "homepage": "https://johnny-bui.github.io/TomLoad/",
-  "keywords": ["loading", "skeleton", "ascii", "animation", "reveal", "ui", "tomdesign"],
+  "bugs": {
+    "url": "https://github.com/johnny-bui/TomLoad/issues"
+  },
+  "keywords": [
+    "loading",
+    "loading-state",
+    "skeleton",
+    "skeleton-loader",
+    "ascii",
+    "glyph",
+    "animation",
+    "reveal",
+    "placeholder",
+    "ui",
+    "vanilla-js",
+    "tomdesign"
+  ],
   "author": "Johnny Bui — Tomdesign (https://tomdesign.vn)",
   "license": "MIT",
-  "devDependencies": { "esbuild": "^0.24.0" }
+  "devDependencies": {
+    "esbuild": "^0.24.0"
+  }
 }

@@ -321,7 +321,7 @@ export function glyph(scope, options = {}) {
           if (dir < 0) p = 1 - p;                                  // play backwards
           if (p <= 0) continue;
           const md = cl.md;
-          if (md.clip) { ctx.save(); ctx.beginPath(); ctx.roundRect(md.clip.x, md.clip.y, md.clip.w, md.clip.h, md.clip.rad); ctx.clip(); }
+          if (md.clip) { ctx.save(); ctx.beginPath(); if (ctx.roundRect) ctx.roundRect(md.clip.x, md.clip.y, md.clip.w, md.clip.h, md.clip.rad); else ctx.rect(md.clip.x, md.clip.y, md.clip.w, md.clip.h); ctx.clip(); }
           if (p >= 1) {
             const fw = md.full.width, fh = md.full.height;
             ctx.drawImage(md.full, cl.sx * fw, cl.sy * fh, fw / md.cols + 1, fh / md.rows + 1, cl.x, cl.y, cl.w + 0.5, cl.h + 0.5);
