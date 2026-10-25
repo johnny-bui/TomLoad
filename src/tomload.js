@@ -209,6 +209,7 @@ export function glyph(scope, options = {}) {
   injectCSS();
   const opts = { ...DEFAULTS, ...options };
   const host = scope;
+  const hadHostClass = host.classList.contains('tl-host');
   if (getComputedStyle(host).position === 'static') host.classList.add('tl-host');
   let token = 0;           // cancels runs that were superseded
   let load = null;         // active loading layer
@@ -228,7 +229,7 @@ export function glyph(scope, options = {}) {
     if (!(prop in values)) values[prop] = el.style[prop];
   };
   const originalBusy = host.getAttribute('aria-busy');
-  const originalHostClass = host.classList.contains('tl-host');
+  const originalHostClass = hadHostClass;
   const originalHideClass = scope.classList.contains('tl-hide');
 
   const preset = () => (typeof opts.preset === 'string' ? PRESETS[opts.preset] || PRESETS.ink : opts.preset);
@@ -560,7 +561,8 @@ export function skeleton({ lines = 3, variant = 'dots', widths, rows, seed = 1, 
   const count = (value, fallback) => Number.isFinite(value) ? Math.max(0, Math.min(100, Math.floor(value))) : fallback;
   lines = count(lines, 3); rows = count(rows, 0); chars = count(chars, 64);
   const r = rng(seed);
-  const row = (n) => Array.from({ length: n }, () => set[Math.floor(r() * set.length)]).join('');
+  const escapeText = (value) => value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  const row = (n) => Array.from({ length: n }, () => escapeText(set[Math.floor(r() * set.length)])).join('');
   if (rows) {
     return `<span class="tls tls-${safeVariant}" aria-hidden="true">${Array.from({ length: rows }, () => `<span class="tls-row">${row(chars)}</span>`).join('')}</span>`;
   }
